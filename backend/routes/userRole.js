@@ -1,8 +1,9 @@
 const express = require("express");
-const { addnewRole} = require("../controller/userRoleController")
+const { addnewRole, updateUserRole } = require("../controller/userRoleController");
 
-const routes = express.Router();
+const router = express.Router();
 
-router.post('/roles', addNewRole);
-router.put('/users/:userId/role', updateUserRole);
-module.export = router;
+router.post('/roles', addnewRole); 
+router.put('/users/:userId/role', updateUserRole); 
+
+module.exports = router; 

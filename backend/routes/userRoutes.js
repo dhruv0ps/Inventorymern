@@ -1,4 +1,4 @@
-// backend/routes/userRoutes.js
+
 const express = require('express');
 const { registerUser, getAllUsers,activateUser,suspendUser,deleteUser } = require('../controller/userController');
 const authroutes = require("../middleware/auth");

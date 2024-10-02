@@ -73,7 +73,7 @@ const suspendUser = async (req, res) => {
       if (!user) {
           return res.status(404).json({ message: 'User not found' });
       }
-      user.status = 'suspended'; // Set status to suspended
+      user.status = 'suspended'; 
       await user.save();
       res.status(200).json({ message: 'User suspended successfully', user });
   } catch (error) {

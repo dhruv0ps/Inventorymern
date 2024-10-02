@@ -10,7 +10,7 @@ import AddUser from './pages/AddUser';
 import ShowUsers from './pages/ShowUsers';
 
 function App() {
- const [token, setToken] = useState(localStorage.getItem('token') || ''); // Load token from localStorage if available
+ const [token, setToken] = useState(localStorage.getItem('token') || ''); 
 
   return (
     <Router>

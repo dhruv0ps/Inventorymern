@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login = ({ setToken }) => {
+    const navigate = useNavigate(); 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -14,6 +16,7 @@ const Login = ({ setToken }) => {
             localStorage.setItem('token', token);
 
             alert('Login successful');
+            navigate('/'); 
         } catch (error) {
             setErrorMessage(error.response?.data?.message || 'Login failed');
         }
