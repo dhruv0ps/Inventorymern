@@ -1,32 +1,58 @@
+
 const express = require("express");
 const dotenv = require('dotenv');
 const cors = require('cors');
+const path = require("path");
 
-const coonectDB = require("./config/db");
+const connectDB = require("./config/db");
 const seedSuperAdmin = require("./seed");
+
 const authRoutes = require('./routes/auth');
 const userRoutes = require("./routes/userRoutes");
-const userRole = require("./routes/userRole");
+const userRoleRoutes = require("./routes/userRole"); 
 const productRoutes = require("./routes/productRoutes");
 const rawRoutes = require("./routes/rawRoutes");
 const tagRoutes = require("./routes/tagRoute");
-const newProductRoutes = require("./routes/newProductRoutes")
+const newProductRoutes = require("./routes/newProductRoutes");
+
 dotenv.config();
-coonectDB();
+
+
+connectDB();
+
 const app = express();
-app.use(express.json());
+
+
 app.use(cors());
-seedSuperAdmin();
+app.use(express.json());
+
+
+const buildPath = path.join(__dirname, "../frontend/build");
+app.use(express.static(buildPath));
+
+
+
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api',userRole)
-app.use("/api",productRoutes)
-app.use("/api",rawRoutes )
-app.use("/api",tagRoutes)
-app.use('/uploads', express.static('uploads')); 
-app.use("/api",newProductRoutes)
+app.use('/api/roles', userRoleRoutes); 
+app.use("/api/products", productRoutes); 
+app.use("/api/raw", rawRoutes); 
+app.use("/api/tags", tagRoutes);
+app.use('/uploads', express.static('uploads'));
+app.use("/api/new-products", newProductRoutes); 
+
+
+app.get("/*", (req, res) => {
+    res.sendFile(path.join(buildPath, "index.html"), (err) => {
+        if (err) {
+            res.status(500).send(err);
+        }
+    });
+});
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
