@@ -15,7 +15,7 @@ const Sidebar = () => {
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     return (
-        <div className={`flex flex-col bg-teal-600 p-5 text-white transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+        <div className={`flex flex-col bg-teal-600 p-5 text-white transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`} style={{ minHeight: '100vh', overflowY: 'auto' }}>
             <div className="flex justify-end mb-4">
                 <button onClick={toggleSidebar} className="text-white focus:outline-none">
                     {isSidebarOpen ? '<' : '>'}
@@ -54,16 +54,29 @@ const Sidebar = () => {
                         </div>
                         {isProductsMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
-                                <li className="mb-2">
+                                {/* <li className="mb-2">
                                     <Link to='/add-product' className="block p-2 hover:bg-teal-500 rounded">Add Product</Link>
+                                </li> */}
+                                <li>
+                                    <Link to='/productlist' className="block p-2 hover:bg-teal-500 rounded">Product list </Link>
                                 </li>
                                 <li>
-                                    <Link to='/manage-products' className="block p-2 hover:bg-teal-500 rounded">Manage Products</Link>
+                                    <Link to='/categorie' className="block p-2 hover:bg-teal-500 rounded">Manage Categorie</Link>
+                                </li>
+                                <li>
+                                    <Link to='/rawmaterial' className="block p-2 hover:bg-teal-500 rounded">Raw Material</Link>
+                                </li>
+                                <li>
+                                    <Link to='/producttags' className="block p-2 hover:bg-teal-500 rounded">Product tags</Link>
+                                </li>
+                                <li>
+                                    <Link to='/newproduct' className="block p-2 hover:bg-teal-500 rounded">Add new Product</Link>
                                 </li>
                             </ul>
                         )}
                     </li>
 
+                    
                     <li className="mb-6">
                         <div onClick={() => setIsInventoryMenuOpen(!isInventoryMenuOpen)} className="flex items-center justify-between p-2 hover:bg-teal-500 rounded cursor-pointer">
                             <div className="flex items-center">
@@ -104,6 +117,7 @@ const Sidebar = () => {
                         )}
                     </li>
 
+                    
                     <li className="mb-6">
                         <div onClick={() => setIsAgentsMenuOpen(!isAgentsMenuOpen)} className="flex items-center justify-between p-2 hover:bg-teal-500 rounded cursor-pointer">
                             <div className="flex items-center">
@@ -144,7 +158,7 @@ const Sidebar = () => {
                         )}
                     </li>
 
-                    <li>
+                    <li className="mb-6">
                         <div onClick={() => setIsPaymentsMenuOpen(!isPaymentsMenuOpen)} className="flex items-center justify-between p-2 hover:bg-teal-500 rounded cursor-pointer">
                             <div className="flex items-center">
                                 <FaDollarSign size={24} />
@@ -155,10 +169,10 @@ const Sidebar = () => {
                         {isPaymentsMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
                                 <li className="mb-2">
-                                    <Link to='/process-payment' className="block p-2 hover:bg-teal-500 rounded">Process Payment</Link>
+                                    <Link to='/add-payment' className="block p-2 hover:bg-teal-500 rounded">Add Payment</Link>
                                 </li>
                                 <li>
-                                    <Link to='/payment-history' className="block p-2 hover:bg-teal-500 rounded">Payment History</Link>
+                                    <Link to='/manage-payments' className="block p-2 hover:bg-teal-500 rounded">Manage Payments</Link>
                                 </li>
                             </ul>
                         )}

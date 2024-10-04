@@ -10,9 +10,9 @@ const Navbar = ({ token, setToken }) => {
   };
 
   const handleLogout = () => {
-    setToken('');  // Clear the token in the parent component
-    localStorage.removeItem('token');  // Clear the token from localStorage if it's stored there
-    navigate('/login');  // Redirect to the login page
+    setToken(''); 
+    localStorage.removeItem('token');  
+    navigate('/login');  
   };
 
   return (

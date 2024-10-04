@@ -17,7 +17,7 @@ const UserRegistrationForm = () => {
         e.preventDefault();
         setError('');
 
-        // Input validation
+        
         if (password !== confirmPassword) {
             setError('Passwords do not match.');
             return;

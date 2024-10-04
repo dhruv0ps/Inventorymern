@@ -8,7 +8,11 @@ import Dashboard from './pages/Dashboard';
 import UserRegistrationForm from './pages/UserRegistrationForm';
 import AddUser from './pages/AddUser';
 import ShowUsers from './pages/ShowUsers';
-
+import  Categorie from './pages/Categorie';
+import RawMaterials from './pages/RawMaterials'
+import ProductTags from './pages/ProductTags';
+import NewProduct from './pages/NewProduct';
+import ProductList from './pages/ProductList';
 function App() {
  const [token, setToken] = useState(localStorage.getItem('token') || ''); 
 
@@ -23,6 +27,11 @@ function App() {
             <Route path="/" element={<Dashboard token={token} />}>
               <Route path="user-register" element={<AddUser />} />
               <Route path="manage-users" element={<ShowUsers />} />
+              <Route path='categorie' element={<Categorie/>}/>
+              <Route path ="rawmaterial" element={<RawMaterials/>}/>
+              <Route path='producttags' element={<ProductTags/>}/>
+              <Route path='newproduct' element={<NewProduct/>}/>
+              <Route path='productlist' element={<ProductList/>}/>
             </Route>
           </Routes>
         ) : (
