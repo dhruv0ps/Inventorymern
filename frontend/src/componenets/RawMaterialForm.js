@@ -31,7 +31,7 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
         formData.append('measuringUnit', measuringUnit);
 
         try {
-            const response = await axios.post('http://localhost:5000/api/raw-materials', formData, {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/raw-materials`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',

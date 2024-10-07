@@ -9,7 +9,7 @@ const ProductTags = () => {
 
     const fetchTags = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/tags'); 
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/tags`); 
             setTags(response.data);
         } catch (error) {
             console.error('Error fetching tags:', error);
@@ -19,7 +19,7 @@ const ProductTags = () => {
     const addTag = async () => {
         if (!newTag) return; 
         try {
-            const response = await axios.post('http://localhost:5000/api/tags', { name: newTag });
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/tags`, { name: newTag });
             setTags([...tags, response.data]);
             setNewTag(''); 
         } catch (error) {
@@ -30,7 +30,7 @@ const ProductTags = () => {
     const updateTag = async (id) => {
         if (!editedTagName) return; 
         try {
-            const response = await axios.put(`http://localhost:5000/api/tags/${id}`, { name: editedTagName });
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/tags/${id}`, { name: editedTagName });
             setTags(tags.map(tag => (tag._id === id ? response.data : tag)));
             setEditingTag(null); 
             setEditedTagName('');
@@ -41,7 +41,7 @@ const ProductTags = () => {
 
     const deleteTag = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/api/tags/${id}`);
+            await axios.delete(`${process.env.REACT_APP_API_URL}/api/tags/${id}`);
             setTags(tags.filter(tag => tag._id !== id));
         } catch (error) {
             console.error('Error deleting tag:', error);

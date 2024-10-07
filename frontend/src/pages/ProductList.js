@@ -30,7 +30,7 @@ const ProductList = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/products');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/products`);
             setProducts(response.data);
             setFilteredProducts(response.data);
         } catch (error) {
@@ -82,7 +82,7 @@ const ProductList = () => {
     const handleDelete = async (productId) => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             try {
-                await axios.delete(`http://localhost:5000/api/products/${productId}`);
+                await axios.delete(`${process.env.REACT_APP_API_URL}/api/products/${productId}`);
                 alert('Product deleted successfully!');
                 fetchProducts(); 
             } catch (error) {
@@ -119,7 +119,7 @@ const ProductList = () => {
         e.preventDefault();
 
         try {
-            await axios.put(`http://localhost:5000/api/products/${editingProduct._id}`, formData);
+            await axios.put(`${process.env.REACT_APP_API_URL}/${editingProduct._id}`, formData);
             alert('Product updated successfully!');
             fetchProducts();
             setIsModalOpen(false); 

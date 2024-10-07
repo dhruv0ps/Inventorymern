@@ -15,7 +15,7 @@ const AddCategory = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/categories',
+        `${process.env.REACT_APP_API_URL}/api/categories`,
         { name, description },
         {
           headers: {

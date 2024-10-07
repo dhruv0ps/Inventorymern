@@ -68,7 +68,7 @@ const NewProduct = () => {
 
         setLoading(true); 
         try {
-            const response = await axios.post('http://localhost:5000/api/products', {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/products`, {
                 parentName,
                 variants,
                 name,
@@ -91,7 +91,7 @@ const NewProduct = () => {
     };
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/tags')
+        axios.get(`${process.env.REACT_APP_API_URL}/api/tags`)
             .then((response) => {
                 setAvailableTags(response.data);
             })
@@ -113,7 +113,7 @@ const NewProduct = () => {
     };
 
     return (
-        <div className="container mx-auto p-6 bg-white border border-gray-300 rounded-lg shadow-md">
+        <div className="container mx-auto p-6 h-200 overflow-y-scroll bg-white border border-gray-300 rounded-lg shadow-md">
             <ToastContainer />
             <h2 className="text-2xl font-bold text-center mb-6">Add New Product</h2>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">

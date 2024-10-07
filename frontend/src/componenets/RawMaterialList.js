@@ -21,7 +21,7 @@ const RawMaterialsList = () => {
 
     const fetchRawMaterials = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/raw-materials');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/raw-materials`);
             setRawMaterials(response.data);
         } catch (error) {
             console.error('Error fetching raw materials:', error);
@@ -42,10 +42,10 @@ const RawMaterialsList = () => {
 
         try {
             if (editingProductId) {
-                await axios.put(`http://localhost:5000/api/raw-materials/${editingProductId}`, formDataToSubmit);
+                await axios.put(`${process.env.REACT_APP_API_URL}/api/raw-materials/${editingProductId}`, formDataToSubmit);
                 alert('Raw Material updated successfully!');
             } else {
-                await axios.post('http://localhost:5000/api/raw-materials', formDataToSubmit);
+                await axios.post(`${process.env.REACT_APP_API_URL}/api/raw-materials`, formDataToSubmit);
                 alert('Raw Material added successfully!');
             }
             fetchRawMaterials(); 
@@ -73,7 +73,7 @@ const RawMaterialsList = () => {
     const handleDeleteClick = async (id) => {
         if (window.confirm("Are you sure you want to delete this raw material?")) {
             try {
-                await axios.delete(`http://localhost:5000/api/raw-materials/${id}`);
+                await axios.delete(`${process.env.REACT_APP_API_URL}/api/raw-materials/${id}`);
                 alert('Raw Material deleted successfully!');
                 fetchRawMaterials(); 
             } catch (error) {
@@ -97,7 +97,7 @@ const RawMaterialsList = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {rawMaterials.map((rawMaterial) => (
                     <div key={rawMaterial._id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                        <img src={`http://localhost:5000/${rawMaterial.image}`} alt={rawMaterial.name} className='w-full h-[200px] object-cover' />
+                        <img src={`${process.env.REACT_APP_API_URL}/${rawMaterial.image}`} alt={rawMaterial.name} className='w-full h-[200px] object-cover' />
                         <div className="p-4">
                             <h3 className="text-lg font-bold">{rawMaterial.name}</h3>
                             <p className="text-gray-600">{rawMaterial.description}</p>

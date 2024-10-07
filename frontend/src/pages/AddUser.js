@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AddUser = () => {
@@ -9,6 +9,23 @@ const AddUser = () => {
     const [role, setRole] = useState('user');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [roles, setRoles] = useState([]);
+
+    
+    useEffect(() => {
+        const fetchRoles = async () => {
+            try {
+                const response = await axios.get("http://localhost:5000/api/roles");
+                setRoles(response.data);
+                console.log(response.data) 
+            } catch (error) {
+                console.error('Error fetching roles:', error);
+                setError('Failed to fetch roles.');
+            }
+        };
+
+        fetchRoles(); 
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -18,106 +35,116 @@ const AddUser = () => {
             setError('Passwords do not match.');
             return;
         }
-        if (!username || !email || !password) {
+
+        if (!username || !email || !password || !confirmPassword) {
             setError('All fields are required.');
             return;
         }
 
-        setLoading(true); 
+        setLoading(true);
 
         try {
-            const response = await axios.post('http://localhost:5000/api/users', {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users`, {
                 username,
                 email,
                 password,
                 role,
             });
+
             alert(response.data.message);
 
-           
+            
             setUsername('');
             setEmail('');
             setPassword('');
             setConfirmPassword('');
             setRole('user');
         } catch (error) {
-            if (error.response) {
+            if (error.response && error.response.data) {
                 setError(error.response.data.message);
             } else {
                 setError('An unexpected error occurred.');
             }
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
     return (
-        <div className="container p-6 bg-gray-100 rounded shadow-md">
-            <h2 className="text-2xl font-bold mb-4 text-center">Register New User</h2>
-            {error && <p className="text-red-500 mb-4">{error}</p>}
+        <div className="container mx-auto max-w-md p-6 bg-card shadow-md rounded-lg mt-10">
+            <h2 className="text-2xl font-semibold text-center mb-6 text-text">Register New User</h2>
+            {error && <p className="text-error text-center mb-4">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <label className="block mb-2" htmlFor="username">Username:</label>
+                    <label htmlFor="username" className="block text-text">Username:</label>
                     <input
                         type="text"
                         id="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:ring focus:border-blue-300"
                         required
-                        className="p-2 border border-gray-300 rounded w-full"
                     />
                 </div>
+
                 <div className="mb-4">
-                    <label className="block mb-2" htmlFor="email">Email:</label>
+                    <label htmlFor="email" className="block text-text">Email:</label>
                     <input
                         type="email"
                         id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:ring focus:border-blue-300"
                         required
-                        className="p-2 border border-gray-300 rounded w-full"
                     />
                 </div>
+
                 <div className="mb-4">
-                    <label className="block mb-2" htmlFor="password">Password:</label>
+                    <label htmlFor="password" className="block text-text">Password:</label>
                     <input
                         type="password"
                         id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:ring focus:border-blue-300"
                         required
-                        className="p-2 border border-gray-300 rounded w-full"
                     />
                 </div>
+
                 <div className="mb-4">
-                    <label className="block mb-2" htmlFor="confirm-password">Confirm Password:</label>
+                    <label htmlFor="confirm-password" className="block text-text">Confirm Password:</label>
                     <input
                         type="password"
                         id="confirm-password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:ring focus:border-blue-300"
                         required
-                        className="p-2 border border-gray-300 rounded w-full"
                     />
                 </div>
+
                 <div className="mb-4">
-                    <label className="block mb-2" htmlFor="role">Role:</label>
+                    <label htmlFor="role" className="block text-text">Role:</label>
                     <select
                         id="role"
                         value={role}
                         onChange={(e) => setRole(e.target.value)}
-                        className="p-2 border border-gray-300 rounded w-full"
+                        className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:ring focus:border-blue-300"
                     >
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                        <option value="manager">Manager</option>
-                        <option value="superadmin">Super Admin</option>
+                        {roles.map((roleOption) => (
+                            <option key={roleOption.id} value={roleOption.name}>
+                                {roleOption.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
-                <button 
-                    type="submit" 
-                    className={`bg-teal-600 text-white p-2 rounded ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    disabled={loading} 
+
+                <button
+                    type="submit"
+                    className={`w-full p-3 text-white bg-success rounded shadow-md hover:bg-warning focus:outline-none focus:ring focus:ring-warning ${
+                        loading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                    disabled={loading}
                 >
                     {loading ? 'Registering...' : 'Register User'}
                 </button>

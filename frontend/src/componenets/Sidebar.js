@@ -15,9 +15,9 @@ const Sidebar = () => {
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     return (
-        <div className={`flex flex-col bg-teal-600 p-5 text-white transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`} style={{ minHeight: '100vh', overflowY: 'auto' }}>
+        <div className={`flex flex-col bg-navbar p-5 text-navbar-text transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`} style={{ minHeight: '100vh', overflowY: 'auto' }}>
             <div className="flex justify-end mb-4">
-                <button onClick={toggleSidebar} className="text-white focus:outline-none">
+                <button onClick={toggleSidebar} className="text-navbar-text focus:outline-none">
                     {isSidebarOpen ? '<' : '>'}
                 </button>
             </div>
@@ -25,7 +25,7 @@ const Sidebar = () => {
             <nav>
                 <ul>
                     <li className="mb-6">
-                        <div onClick={() => setIsUsersMenuOpen(!isUsersMenuOpen)} className="flex items-center justify-between p-2 hover:bg-teal-500 rounded cursor-pointer">
+                        <div onClick={() => setIsUsersMenuOpen(!isUsersMenuOpen)} className="flex items-center justify-between p-2 hover:bg-navbar-hover rounded cursor-pointer">
                             <div className="flex items-center">
                                 <FaUser size={24} />
                                 {isSidebarOpen && <span className="ml-4">Users</span>}
@@ -35,17 +35,17 @@ const Sidebar = () => {
                         {isUsersMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
                                 <li className="mb-2">
-                                    <Link to='/user-register' className="block p-2 hover:bg-teal-500 rounded">Add User</Link>
+                                    <Link to='/user-register' className="block p-2 hover:bg-navbar-hover rounded">Add User</Link>
                                 </li>
                                 <li>
-                                    <Link to='/manage-users' className="block p-2 hover:bg-teal-500 rounded">Manage Users</Link>
+                                    <Link to='/manage-users' className="block p-2 hover:bg-navbar-hover rounded">Manage Users</Link>
                                 </li>
                             </ul>
                         )}
                     </li>
 
                     <li className="mb-6">
-                        <div onClick={() => setIsProductsMenuOpen(!isProductsMenuOpen)} className="flex items-center justify-between p-2 hover:bg-teal-500 rounded cursor-pointer">
+                        <div onClick={() => setIsProductsMenuOpen(!isProductsMenuOpen)} className="flex items-center justify-between p-2 hover:bg-navbar-hover rounded cursor-pointer">
                             <div className="flex items-center">
                                 <FaBox size={24} />
                                 {isSidebarOpen && <span className="ml-4">Products</span>}
@@ -54,31 +54,27 @@ const Sidebar = () => {
                         </div>
                         {isProductsMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
-                                {/* <li className="mb-2">
-                                    <Link to='/add-product' className="block p-2 hover:bg-teal-500 rounded">Add Product</Link>
-                                </li> */}
                                 <li>
-                                    <Link to='/productlist' className="block p-2 hover:bg-teal-500 rounded">Product list </Link>
+                                    <Link to='/productlist' className="block p-2 hover:bg-navbar-hover rounded">Product List</Link>
                                 </li>
                                 <li>
-                                    <Link to='/categorie' className="block p-2 hover:bg-teal-500 rounded">Manage Categorie</Link>
+                                    <Link to='/categorie' className="block p-2 hover:bg-navbar-hover rounded">Manage Categorie</Link>
                                 </li>
                                 <li>
-                                    <Link to='/rawmaterial' className="block p-2 hover:bg-teal-500 rounded">Raw Material</Link>
+                                    <Link to='/rawmaterial' className="block p-2 hover:bg-navbar-hover rounded">Raw Material</Link>
                                 </li>
                                 <li>
-                                    <Link to='/producttags' className="block p-2 hover:bg-teal-500 rounded">Product tags</Link>
+                                    <Link to='/producttags' className="block p-2 hover:bg-navbar-hover rounded">Product Tags</Link>
                                 </li>
                                 <li>
-                                    <Link to='/newproduct' className="block p-2 hover:bg-teal-500 rounded">Add new Product</Link>
+                                    <Link to='/newproduct' className="block p-2 hover:bg-navbar-hover rounded">Add New Product</Link>
                                 </li>
                             </ul>
                         )}
                     </li>
 
-                    
                     <li className="mb-6">
-                        <div onClick={() => setIsInventoryMenuOpen(!isInventoryMenuOpen)} className="flex items-center justify-between p-2 hover:bg-teal-500 rounded cursor-pointer">
+                        <div onClick={() => setIsInventoryMenuOpen(!isInventoryMenuOpen)} className="flex items-center justify-between p-2 hover:bg-navbar-hover rounded cursor-pointer">
                             <div className="flex items-center">
                                 <FaWarehouse size={24} />
                                 {isSidebarOpen && <span className="ml-4">Inventory</span>}
@@ -88,17 +84,17 @@ const Sidebar = () => {
                         {isInventoryMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
                                 <li className="mb-2">
-                                    <Link to='/track-inventory' className="block p-2 hover:bg-teal-500 rounded">Track Inventory</Link>
+                                    <Link to='/track-inventory' className="block p-2 hover:bg-navbar-hover rounded">Track Inventory</Link>
                                 </li>
                                 <li>
-                                    <Link to='/inventory-reports' className="block p-2 hover:bg-teal-500 rounded">Inventory Reports</Link>
+                                    <Link to='/inventory-reports' className="block p-2 hover:bg-navbar-hover rounded">Inventory Reports</Link>
                                 </li>
                             </ul>
                         )}
                     </li>
 
                     <li className="mb-6">
-                        <div onClick={() => setIsCustomersMenuOpen(!isCustomersMenuOpen)} className="flex items-center justify-between p-2 hover:bg-teal-500 rounded cursor-pointer">
+                        <div onClick={() => setIsCustomersMenuOpen(!isCustomersMenuOpen)} className="flex items-center justify-between p-2 hover:bg-navbar-hover rounded cursor-pointer">
                             <div className="flex items-center">
                                 <FaUsers size={24} />
                                 {isSidebarOpen && <span className="ml-4">Customers</span>}
@@ -108,18 +104,17 @@ const Sidebar = () => {
                         {isCustomersMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
                                 <li className="mb-2">
-                                    <Link to='/add-customer' className="block p-2 hover:bg-teal-500 rounded">Add Customer</Link>
+                                    <Link to='/add-customer' className="block p-2 hover:bg-navbar-hover rounded">Add Customer</Link>
                                 </li>
                                 <li>
-                                    <Link to='/manage-customers' className="block p-2 hover:bg-teal-500 rounded">Manage Customers</Link>
+                                    <Link to='/manage-customers' className="block p-2 hover:bg-navbar-hover rounded">Manage Customers</Link>
                                 </li>
                             </ul>
                         )}
                     </li>
 
-                    
                     <li className="mb-6">
-                        <div onClick={() => setIsAgentsMenuOpen(!isAgentsMenuOpen)} className="flex items-center justify-between p-2 hover:bg-teal-500 rounded cursor-pointer">
+                        <div onClick={() => setIsAgentsMenuOpen(!isAgentsMenuOpen)} className="flex items-center justify-between p-2 hover:bg-navbar-hover rounded cursor-pointer">
                             <div className="flex items-center">
                                 <FaHandshake size={24} />
                                 {isSidebarOpen && <span className="ml-4">Agents</span>}
@@ -129,17 +124,17 @@ const Sidebar = () => {
                         {isAgentsMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
                                 <li className="mb-2">
-                                    <Link to='/add-agent' className="block p-2 hover:bg-teal-500 rounded">Add Agent</Link>
+                                    <Link to='/add-agent' className="block p-2 hover:bg-navbar-hover rounded">Add Agent</Link>
                                 </li>
                                 <li>
-                                    <Link to='/manage-agents' className="block p-2 hover:bg-teal-500 rounded">Manage Agents</Link>
+                                    <Link to='/manage-agents' className="block p-2 hover:bg-navbar-hover rounded">Manage Agents</Link>
                                 </li>
                             </ul>
                         )}
                     </li>
 
                     <li className="mb-6">
-                        <div onClick={() => setIsInvoicesMenuOpen(!isInvoicesMenuOpen)} className="flex items-center justify-between p-2 hover:bg-teal-500 rounded cursor-pointer">
+                        <div onClick={() => setIsInvoicesMenuOpen(!isInvoicesMenuOpen)} className="flex items-center justify-between p-2 hover:bg-navbar-hover rounded cursor-pointer">
                             <div className="flex items-center">
                                 <FaFileInvoice size={24} />
                                 {isSidebarOpen && <span className="ml-4">Invoices</span>}
@@ -149,17 +144,17 @@ const Sidebar = () => {
                         {isInvoicesMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
                                 <li className="mb-2">
-                                    <Link to='/create-invoice' className="block p-2 hover:bg-teal-500 rounded">Create Invoice</Link>
+                                    <Link to='/create-invoice' className="block p-2 hover:bg-navbar-hover rounded">Create Invoice</Link>
                                 </li>
                                 <li>
-                                    <Link to='/manage-invoices' className="block p-2 hover:bg-teal-500 rounded">Manage Invoices</Link>
+                                    <Link to='/manage-invoices' className="block p-2 hover:bg-navbar-hover rounded">Manage Invoices</Link>
                                 </li>
                             </ul>
                         )}
                     </li>
 
                     <li className="mb-6">
-                        <div onClick={() => setIsPaymentsMenuOpen(!isPaymentsMenuOpen)} className="flex items-center justify-between p-2 hover:bg-teal-500 rounded cursor-pointer">
+                        <div onClick={() => setIsPaymentsMenuOpen(!isPaymentsMenuOpen)} className="flex items-center justify-between p-2 hover:bg-navbar-hover rounded cursor-pointer">
                             <div className="flex items-center">
                                 <FaDollarSign size={24} />
                                 {isSidebarOpen && <span className="ml-4">Payments</span>}
@@ -169,10 +164,10 @@ const Sidebar = () => {
                         {isPaymentsMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
                                 <li className="mb-2">
-                                    <Link to='/add-payment' className="block p-2 hover:bg-teal-500 rounded">Add Payment</Link>
+                                    <Link to='/add-payment' className="block p-2 hover:bg-navbar-hover rounded">Add Payment</Link>
                                 </li>
                                 <li>
-                                    <Link to='/manage-payments' className="block p-2 hover:bg-teal-500 rounded">Manage Payments</Link>
+                                    <Link to='/manage-payments' className="block p-2 hover:bg-navbar-hover rounded">Manage Payments</Link>
                                 </li>
                             </ul>
                         )}

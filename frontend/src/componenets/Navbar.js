@@ -10,45 +10,46 @@ const Navbar = ({ token, setToken }) => {
   };
 
   const handleLogout = () => {
-    setToken(''); 
-    localStorage.removeItem('token');  
-    navigate('/login');  
+    setToken('');
+    localStorage.removeItem('token');
+    navigate('/login');
   };
 
   return (
-    <nav className="bg-teal-600 shadow-lg">
+    <nav className="bg-navbar shadow-lg">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
-            <a href="#" className="text-xl font-bold text-white">
+            <a href="#" className="text-xl font-bold text-navbar-text">
               MyApp
             </a>
           </div>
 
           <div className="hidden md:flex space-x-4 items-center">
-            <a href="#" className="text-white hover:text-gray-600 transition duration-300">
-              Dashboard
-            </a>
-            <a href="#" className="text-white hover:text-gray-600 transition duration-300">
-              About
-            </a>
-            <a href="#" className="text-white hover:text-gray-600 transition duration-300">
-              Services
-            </a>
-            <a href="#" className="text-white hover:text-gray-600 transition duration-300">
-              Contact
-            </a>
+            <NavLink to="/" label="Dashboard" />
+            <NavLink to="/about" label="About" />
+            <NavLink to="/services" label="Services" />
+            <NavLink to="/contact" label="Contact" />
             {token && (
-              <button onClick={handleLogout} className="text-white hover:text-gray-600 transition duration-300">
+              <button 
+                onClick={handleLogout} 
+                className="text-navbar-text hover:text-gray-300 transition duration-300"
+              >
                 Logout
               </button>
             )}
           </div>
 
           <div className="flex md:hidden items-center">
-            <button onClick={toggleMenu} type="button" className="text-white hover:text-gray-600 focus:outline-none">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}></path>
+            <button 
+              onClick={toggleMenu} 
+              type="button" 
+              aria-label="Toggle Menu"
+              className="text-navbar-text hover:text-gray-300 focus:outline-none"
+            >
+            
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
               </svg>
             </button>
           </div>
@@ -56,13 +57,16 @@ const Navbar = ({ token, setToken }) => {
       </div>
 
       {isOpen && (
-        <div className="md:hidden">
-          <a href="#" className="block px-4 py-2 text-white hover:bg-gray-900">Dashboard</a>
-          <a href="#" className="block px-4 py-2 text-white hover:bg-gray-900">About</a>
-          <a href="#" className="block px-4 py-2 text-white hover:bg-gray-900">Services</a>
-          <a href="#" className="block px-4 py-2 text-white hover:bg-gray-900">Contact</a>
+        <div className="md:hidden bg-navbar">
+          <NavLink to="/" label="Dashboard" mobile />
+          <NavLink to="/about" label="About" mobile />
+          <NavLink to="/services" label="Services" mobile />
+          <NavLink to="/contact" label="Contact" mobile />
           {token && (
-            <button onClick={handleLogout} className="block px-4 py-2 text-white hover:bg-gray-900 w-full text-left">
+            <button 
+              onClick={handleLogout} 
+              className="block px-4 py-2 text-navbar-text hover:bg-gray-900 w-full text-left"
+            >
               Logout
             </button>
           )}
@@ -71,5 +75,15 @@ const Navbar = ({ token, setToken }) => {
     </nav>
   );
 };
+
+
+const NavLink = ({ to, label, mobile }) => (
+  <a
+    href={to}
+    className={`block px-4 py-2 text-navbar-text hover:bg-gray-900 ${mobile ? 'md:hidden' : 'md:flex'}`}
+  >
+    {label}
+  </a>
+);
 
 export default Navbar;

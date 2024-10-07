@@ -16,6 +16,7 @@ const addcategorie = async(req,res) => {
        return res.status(201).json({message : "categorie added successfullt"})
       }
       catch (error) {
+        console.log(error);
         res.status(500).json({ message: error.message });
     }
 

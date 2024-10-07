@@ -13,7 +13,7 @@ const CategoryList = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/categories', {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/categories`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -35,7 +35,7 @@ const CategoryList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/categories/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/categories/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -55,7 +55,7 @@ const CategoryList = () => {
     e.preventDefault();
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/categories/${editingCategory._id}`,
+        `${process.env.REACT_APP_API_URL}/api/categories/${editingCategory._id}`,
         editingCategory,
         {
           headers: {

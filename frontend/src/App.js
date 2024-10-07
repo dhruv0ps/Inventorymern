@@ -13,6 +13,9 @@ import RawMaterials from './pages/RawMaterials'
 import ProductTags from './pages/ProductTags';
 import NewProduct from './pages/NewProduct';
 import ProductList from './pages/ProductList';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Service from './pages/Service';
 function App() {
  const [token, setToken] = useState(localStorage.getItem('token') || ''); 
 
@@ -21,7 +24,11 @@ function App() {
       <div>
        
         <Navbar token={token} setToken={setToken} />
-
+        <Routes>
+                        <Route path='about' element={<About />} />
+                        <Route path='services' element={<Service />} />
+                        <Route path='contact' element={<Contact />} />
+                    </Routes>
         {token ? (
           <Routes>
             <Route path="/" element={<Dashboard token={token} />}>
