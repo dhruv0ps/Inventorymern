@@ -36,7 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api', userRoleRoutes); 
 app.use("/api", productRoutes); 
-app.use("/api", rawRoutes); 
+app.use("/api/", rawRoutes); 
 app.use("/api/tags", tagRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use("/api", newProductRoutes); 
@@ -44,7 +44,9 @@ app.use("/api", newProductRoutes);
 
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
+
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
