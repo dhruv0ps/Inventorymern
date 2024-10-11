@@ -6,9 +6,10 @@ import { Routes, Route, Outlet } from 'react-router-dom';
 const Dashboard = () => {
   return (
     <div>
-          <div className="flex h-screen">
+          <div className="flex  h-screen">
       
 <Sidebar/>
+
              
              <Outlet/>
     

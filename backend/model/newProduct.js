@@ -1,29 +1,24 @@
 const mongoose = require("mongoose");
 
 const newproductSchema = new mongoose.Schema({
-    parentName : {type:String,require:true},
+    parentName: { type: String, required: true },
     variants: [
         {
-            size : {type:String ,require:true},
-            firmness : {type : String ,require : true}
-
-            
+            size: { type: String, required: true },
+            firmness: { type: String, required: true },
+            SKU: { type: String, required: true, unique: true }, // Child SKU for variant
+            price: { type: Number, required: true },
+            weight: { type: Number, required: true },
+            color: { type: String, required: true },
+            rawMaterials: [{ material: String, quantity: Number, unit: String }],
+            tags: [{ type: String }]
         }
-
-       
     ],
-    SKU: { type: String, required: true, unique: true }, 
-    name : {type :String ,required :true},
-    description: { type: String, required: true },      
-    regularPrice: { type: Number, required: true },
-    color: { type: String,  },
-    weight: {type :String },
-    rawMaterials: [{ material: String, quantity: Number, unit: String }], 
-    // tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }]   
-    tags: [{ type: String }],
+    SKU: { type: String, required: true, unique: true }, // Parent SKU
+    name: { type: String, required: true },
+    description: { type: String, required: true },
     
-})
-
-const Products = mongoose.model("Products",newproductSchema)
+});
+const Products = mongoose.model("Products", newproductSchema);
 
 module.exports = Products;

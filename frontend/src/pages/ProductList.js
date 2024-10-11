@@ -1,7 +1,5 @@
-// src/components/ProductList.js
-
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ProductList = () => {
@@ -16,7 +14,7 @@ const ProductList = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
@@ -26,6 +24,7 @@ const ProductList = () => {
     setLoading(true);
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/products`);
+      console.log(response.data);
       setProducts(response.data);
       setFilteredProducts(response.data);
     } catch (error) {
@@ -49,8 +48,7 @@ const ProductList = () => {
       filtered = filtered.filter((product) =>
         product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
         product.SKU.toLowerCase().includes(filters.search.toLowerCase()) ||
-        product.parentName?.toLowerCase().includes(filters.search.toLowerCase()) 
-        // product.weight.toString().includes(filters.search) // Include weight in search
+        product.parentName?.toLowerCase().includes(filters.search.toLowerCase())
       );
     }
 
@@ -82,7 +80,7 @@ const ProductList = () => {
   };
 
   const goToEditPage = (product) => {
-    navigate(`/editproduct/${product._id}`); // Use navigate instead of history
+    navigate(`/editproduct/${product._id}`);
   };
 
   // Pagination logic
@@ -120,7 +118,7 @@ const ProductList = () => {
       </div>
 
       {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4"> {/* Adjust grid columns to 4 */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         <input
           type="text"
           name="search"
@@ -137,24 +135,23 @@ const ProductList = () => {
         >
           <option value="">Select Color</option>
           <option value="Red">Red</option>
-    <option value="Green">Green</option>
-    <option value="Blue">Blue</option>
-    <option value="Yellow">Yellow</option>
-    <option value="Orange">Orange</option>
-    <option value="Purple">Purple</option>
-    <option value="Pink">Pink</option>
-    <option value="Brown">Brown</option>
-    <option value="Gray">Gray</option>
-    <option value="Cyan">Cyan</option>
-    <option value="Magenta">Magenta</option>
-    <option value="Lime">Lime</option>
-    <option value="Teal">Teal</option>
-    <option value="Navy">Navy</option>
-    <option value="Maroon">Maroon</option>
-    <option value="Olive">Olive</option>
-    <option value="Coral">Coral</option>
-    <option value="Gold">Gold</option>
-          
+          <option value="Green">Green</option>
+          <option value="Blue">Blue</option>
+          <option value="Yellow">Yellow</option>
+          <option value="Orange">Orange</option>
+          <option value="Purple">Purple</option>
+          <option value="Pink">Pink</option>
+          <option value="Brown">Brown</option>
+          <option value="Gray">Gray</option>
+          <option value="Cyan">Cyan</option>
+          <option value="Magenta">Magenta</option>
+          <option value="Lime">Lime</option>
+          <option value="Teal">Teal</option>
+          <option value="Navy">Navy</option>
+          <option value="Maroon">Maroon</option>
+          <option value="Olive">Olive</option>
+          <option value="Coral">Coral</option>
+          <option value="Gold">Gold</option>
         </select>
         <input
           type="number"
@@ -192,58 +189,80 @@ const ProductList = () => {
               </tr>
             </thead>
             <tbody>
-              {currentProducts.map((product) => (
-                <tr key={product._id} className="border-b">
-                  <td className="border px-4 py-2">{product.parentName}</td>
-                  <td className="border px-4 py-2">{product.name}</td>
-                  <td className="border px-4 py-2">{product.SKU}</td>
-                  <td className="border px-4 py-2">{product.regularPrice}</td>
-                  <td className="border px-4 py-2">{product.color}</td>
-                  <td className="border px-4 py-2">{product.weight}</td>
-                  <td className="border px-4 py-2 flex space-x-2">
-                    <button
-                      onClick={() => goToEditPage(product)} // Navigate to edit page
-                      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product._id)}
-                      className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+  {currentProducts.map((product) => (
+    product.variants.length > 0 ? (
+      product.variants.map((variant, index) => (
+        <tr key={variant.SKU + index} className="border-b">
+          {index === 0 && (
+            <td rowSpan={product.variants.length} className="border px-4 py-2">{product.parentName}</td>
+          )}
+          <td className="border px-4 py-2">{variant.name || product.name}</td>
+          <td className="border px-4 py-2">{variant.SKU}</td>
+          <td className="border px-4 py-2">{variant.price}</td> {/* Display variant price */}
+          <td className="border px-4 py-2">{variant.color}</td> {/* Display variant color */}
+          <td className="border px-4 py-2">{variant.weight || product.weight}</td>
+          <td className="border px-4 py-2 flex space-x-2">
+            <button
+              onClick={() => goToEditPage(product)}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => handleDelete(product._id)}
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr key={product._id} className="border-b">
+        <td className="border px-4 py-2">{product.parentName}</td>
+        <td className="border px-4 py-2">{product.name}</td>
+        <td className="border px-4 py-2">{product.SKU}</td>
+        <td className="border px-4 py-2">{product.regularPrice}</td>
+        <td className="border px-4 py-2">{product.color}</td>
+        <td className="border px-4 py-2">{product.weight}</td>
+        <td className="border px-4 py-2 flex space-x-2">
+          <button
+            onClick={() => goToEditPage(product)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => handleDelete(product._id)}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    )
+  ))}
+</tbody>
+
           </table>
         )}
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-center mt-6 ">
+      <div className="flex justify-between mt-4">
         <button
           onClick={handlePreviousPage}
-          className={`px-3 py-1 mr-4 rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600 transition'}`}
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
           disabled={currentPage === 1}
         >
           Previous
         </button>
-
-        {Array.from({ length: totalPages }, (_, index) => (
-          <button
-            key={index}
-            onClick={() => handlePagination(index + 1)}
-            className={`px-3 py-1  rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-          >
-            {index + 1}
-          </button>
-        ))}
-
+        <div className="flex items-center">
+          Page {currentPage} of {totalPages}
+        </div>
         <button
           onClick={handleNextPage}
-          className={`px-3 py-1 ml-4 rounded ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600 transition'}`}
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
           disabled={currentPage === totalPages}
         >
           Next

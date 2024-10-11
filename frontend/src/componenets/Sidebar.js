@@ -15,8 +15,8 @@ const Sidebar = () => {
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     return (
-        <div className={`flex flex-col bg-navbar p-5 text-navbar-text transition-all duration-300  ${isSidebarOpen ? 'md:w-64 sm:w-70'  : 'w-20'}`} style={{ minHeight: '100vh', overflowY: 'auto' }}>
-            <div className="flex justify-end mb-4">
+        <div className={`flex flex-col bg-navbar p-5 text-navbar-text transition-all duration-300  ${isSidebarOpen ? 'w-64'  : 'w-20'}`} style={{ minHeight: '100vh', overflowY: 'auto' }}>
+            <div className="flex justify-end mb-4 ">
                 <button onClick={toggleSidebar} className="text-navbar-text focus:outline-none">
                     {isSidebarOpen ? '<' : '>'}
                 </button>

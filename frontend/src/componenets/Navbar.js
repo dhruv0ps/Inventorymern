@@ -23,7 +23,7 @@ const Navbar = ({ token, setToken }) => {
           <img 
           src={logo}
           alt="Logo" 
-          className="h-10 w-12 mr-3" 
+          className="h-10  mr-3" 
         />
             <a href="#" className="text-xl font-bold text-navbar-text">
             ALORA
