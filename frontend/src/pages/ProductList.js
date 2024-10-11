@@ -49,8 +49,8 @@ const ProductList = () => {
       filtered = filtered.filter((product) =>
         product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
         product.SKU.toLowerCase().includes(filters.search.toLowerCase()) ||
-        product.parentName?.toLowerCase().includes(filters.search.toLowerCase()) ||
-        product.weight.toString().includes(filters.search) // Include weight in search
+        product.parentName?.toLowerCase().includes(filters.search.toLowerCase()) 
+        // product.weight.toString().includes(filters.search) // Include weight in search
       );
     }
 
