@@ -16,6 +16,19 @@ import ProductList from './pages/ProductList';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Service from './pages/Service';
+import OtherLogin from './componenets/OtherLogin';
+import Profile from './componenets/Profile';
+import CustomerForm from './pages/CustomerForm';
+import CustomerList from './pages/CustomerList';
+import NewAgent from './pages/NewAgent';
+import AgentList from './pages/AgentList';
+import CategoryManagement from './pages/CategoryManagement';
+import AddCategory from './componenets/AddCategory';
+import CategoryList from './componenets/CategoryList';
+import RawMaterialsList from './componenets/RawMaterialList';
+import RawMaterialForm from './componenets/RawMaterialForm';
+import EditProduct from './componenets/EditProduct';
+
 function App() {
  const [token, setToken] = useState(localStorage.getItem('token') || ''); 
 
@@ -34,11 +47,21 @@ function App() {
             <Route path="/" element={<Dashboard token={token} />}>
               <Route path="user-register" element={<AddUser />} />
               <Route path="manage-users" element={<ShowUsers />} />
-              <Route path='categorie' element={<Categorie/>}/>
-              <Route path ="rawmaterial" element={<RawMaterials/>}/>
+              <Route path='category' element={<CategoryList/>}/>
+              <Route path ="addnewcategory" element={<AddCategory/>}/>
+              <Route path ="rawmaterial" element={<RawMaterialsList/>}/>
+              <Route path="addnewraw" element={<RawMaterials/>}/>
               <Route path='producttags' element={<ProductTags/>}/>
               <Route path='newproduct' element={<NewProduct/>}/>
               <Route path='productlist' element={<ProductList/>}/>
+              <Route path="editproduct/:id" element={<EditProduct />} />
+              <Route path = "otherlogin" element={<OtherLogin/>}/>
+              <Route path ="profile/:userId" element={<Profile/>}/>
+              <Route path ="customerform" element={<CustomerForm/>}/>
+              <Route path = "managecustomers" element={<CustomerList/>}/>
+              <Route path="addagent" element={<NewAgent/>}/>
+              <Route path='agentlist' element={<AgentList/>}/>
+              <Route path='managecategory' element={<CategoryManagement/>}/>  
             </Route>
           </Routes>
         ) : (

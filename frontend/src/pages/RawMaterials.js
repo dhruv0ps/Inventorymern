@@ -12,7 +12,7 @@ const RawMaterials = () => {
         <div className="container mx-auto mt-8 p-4 max-w-xl">
             <h2 className="text-3xl flex justify-center font-semibold mb-6 text-gray-800">Raw Materials</h2>
             <RawMaterialForm onRawMaterialAdded={handleRawMaterialAdded} />
-            <RawMaterialList />
+            {/* <RawMaterialList /> */}
         </div>
     );
 };

@@ -15,7 +15,7 @@ const Sidebar = () => {
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     return (
-        <div className={`flex flex-col bg-navbar p-5 text-navbar-text transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`} style={{ minHeight: '100vh', overflowY: 'auto' }}>
+        <div className={`flex flex-col bg-navbar p-5 text-navbar-text transition-all duration-300  ${isSidebarOpen ? 'md:w-64 sm:w-70'  : 'w-20'}`} style={{ minHeight: '100vh', overflowY: 'auto' }}>
             <div className="flex justify-end mb-4">
                 <button onClick={toggleSidebar} className="text-navbar-text focus:outline-none">
                     {isSidebarOpen ? '<' : '>'}
@@ -25,7 +25,7 @@ const Sidebar = () => {
             <nav>
                 <ul>
                     <li className="mb-6">
-                        <div onClick={() => setIsUsersMenuOpen(!isUsersMenuOpen)} className="flex items-center justify-between p-2 hover:bg-navbar-hover rounded cursor-pointer">
+                        <div onClick={() => setIsUsersMenuOpen(!isUsersMenuOpen)} className="flex items-center justify-between p-2 md:full hover:bg-navbar-hover rounded cursor-pointer">
                             <div className="flex items-center">
                                 <FaUser size={24} />
                                 {isSidebarOpen && <span className="ml-4">Users</span>}
@@ -58,7 +58,7 @@ const Sidebar = () => {
                                     <Link to='/productlist' className="block p-2 hover:bg-navbar-hover rounded">Product List</Link>
                                 </li>
                                 <li>
-                                    <Link to='/categorie' className="block p-2 hover:bg-navbar-hover rounded">Manage Categorie</Link>
+                                    <Link to='/category' className="block p-2 hover:bg-navbar-hover rounded">Manage Category</Link>
                                 </li>
                                 <li>
                                     <Link to='/rawmaterial' className="block p-2 hover:bg-navbar-hover rounded">Raw Material</Link>
@@ -66,14 +66,14 @@ const Sidebar = () => {
                                 <li>
                                     <Link to='/producttags' className="block p-2 hover:bg-navbar-hover rounded">Product Tags</Link>
                                 </li>
-                                <li>
+                                {/* <li>
                                     <Link to='/newproduct' className="block p-2 hover:bg-navbar-hover rounded">Add New Product</Link>
-                                </li>
+                                </li> */}
                             </ul>
                         )}
                     </li>
 
-                    <li className="mb-6">
+                    {/* <li className="mb-6">
                         <div onClick={() => setIsInventoryMenuOpen(!isInventoryMenuOpen)} className="flex items-center justify-between p-2 hover:bg-navbar-hover rounded cursor-pointer">
                             <div className="flex items-center">
                                 <FaWarehouse size={24} />
@@ -104,10 +104,13 @@ const Sidebar = () => {
                         {isCustomersMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
                                 <li className="mb-2">
-                                    <Link to='/add-customer' className="block p-2 hover:bg-navbar-hover rounded">Add Customer</Link>
+                                    <Link to='/customerform' className="block p-2 hover:bg-navbar-hover rounded">Add Customer</Link>
                                 </li>
                                 <li>
-                                    <Link to='/manage-customers' className="block p-2 hover:bg-navbar-hover rounded">Manage Customers</Link>
+                                    <Link to='/managecustomers' className="block p-2 hover:bg-navbar-hover rounded">Manage Customers</Link>
+                                </li>
+                                <li>
+                                    <Link to='/managecategory' className="block p-2 hover:bg-navbar-hover rounded">Manage Category</Link>
                                 </li>
                             </ul>
                         )}
@@ -124,10 +127,10 @@ const Sidebar = () => {
                         {isAgentsMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
                                 <li className="mb-2">
-                                    <Link to='/add-agent' className="block p-2 hover:bg-navbar-hover rounded">Add Agent</Link>
+                                    <Link to='/addagent' className="block p-2 hover:bg-navbar-hover rounded">Add Agent</Link>
                                 </li>
                                 <li>
-                                    <Link to='/manage-agents' className="block p-2 hover:bg-navbar-hover rounded">Manage Agents</Link>
+                                    <Link to='/agentlist' className="block p-2 hover:bg-navbar-hover rounded">Manage Agents</Link>
                                 </li>
                             </ul>
                         )}
@@ -164,14 +167,14 @@ const Sidebar = () => {
                         {isPaymentsMenuOpen && isSidebarOpen && (
                             <ul className="ml-6 mt-2">
                                 <li className="mb-2">
-                                    <Link to='/add-payment' className="block p-2 hover:bg-navbar-hover rounded">Add Payment</Link>
+                                    <Link to='/addpayment' className="block p-2 hover:bg-navbar-hover rounded">Add Payment</Link>
                                 </li>
                                 <li>
-                                    <Link to='/manage-payments' className="block p-2 hover:bg-navbar-hover rounded">Manage Payments</Link>
+                                    <Link to='/managepayments' className="block p-2 hover:bg-navbar-hover rounded">Manage Payments</Link>
                                 </li>
                             </ul>
                         )}
-                    </li>
+                    </li> */}
                 </ul>
             </nav>
         </div>
@@ -179,3 +182,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+

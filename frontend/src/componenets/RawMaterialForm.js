@@ -11,14 +11,14 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
     const [success, setSuccess] = useState('');
     const token = localStorage.getItem('token');
 
-    
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        setImage(file);
-        setImagePreview(URL.createObjectURL(file));
+        if (file) {
+            setImage(file);
+            setImagePreview(URL.createObjectURL(file)); // Directly set the preview without dimension check
+        }
     };
 
-    
     const handleAddRawMaterial = async (e) => {
         e.preventDefault();
         setError('');
@@ -45,7 +45,6 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
         }
     };
 
-   
     const resetForm = () => {
         setName('');
         setDescription('');
@@ -54,53 +53,131 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
         setMeasuringUnit('in');
     };
 
+    // Inline styles
+    const formStyle = {
+        backgroundColor: '#f0f0f0', // Gray background
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
+    };
+
+    const inputStyle = {
+        width: '100%',
+        padding: '10px',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        marginBottom: '10px',
+        boxSizing: 'border-box', // Ensures padding is included in width
+    };
+
+    const buttonStyle = {
+        backgroundColor: '#007bff',
+        color: 'white',
+        padding: '12px',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        width: '100%',
+        transition: 'background-color 0.3s ease',
+    };
+
+    const buttonHoverStyle = {
+        backgroundColor: '#0056b3',
+    };
+
     return (
-        <form onSubmit={handleAddRawMaterial} className="mb-8 bg-white p-6 rounded-lg shadow-md">
+        <form onSubmit={handleAddRawMaterial} style={formStyle} className="mb-8">
             {error && <p className="text-red-500 text-sm">{error}</p>}
             {success && <p className="text-green-500 text-sm">{success}</p>}
-            <div className="mb-4">
+            
+            <div className="form-group mb-4">
+                <label htmlFor="material-name" className="block mb-1 font-semibold">Material Name</label>
                 <input
                     type="text"
-                    placeholder="Material Name"
+                    id="material-name"
+                    placeholder="Enter material name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="border border-gray-500 p-3 w-full rounded focus:outline-none focus:border-teal-500"
+                    style={inputStyle}
                     required
                 />
             </div>
-            <div className="mb-4">
+            
+            <div className="form-group mb-4">
+                <label htmlFor="material-description" className="block mb-1 font-semibold">Material Description</label>
                 <input
                     type="text"
-                    placeholder="Material Description"
+                    id="material-description"
+                    placeholder="Enter material description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="border border-gray-500 p-3 w-full rounded focus:outline-none focus:border-teal-500"
+                    style={inputStyle}
                     required
                 />
             </div>
-            <div className="mb-4">
-                <input
-                    type="file"
-                    onChange={handleImageChange}
-                    className="border border-gray-500 p-3 w-full rounded focus:outline-none focus:border-teal-500"
-                    required
-                />
-                {imagePreview && <img src={imagePreview} alt="Preview" className="h-32 w-32 object-cover mt-2" />}
+            
+            <div className="mb-4 flex items-center justify-center w-full">
+                <label 
+                    htmlFor="dropzone-file" 
+                    className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-100 transition duration-300"
+                >
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        {imagePreview ? (
+                            <img src={imagePreview} alt="Uploaded Preview" className="h-auto max-h-32 object-cover mb-2" />
+                        ) : (
+                            <>
+                                <svg 
+                                    className="w-8 h-8 mb-4 text-gray-500" 
+                                    aria-hidden="true" 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    fill="none" 
+                                    viewBox="0 0 20 16"
+                                >
+                                    <path 
+                                        stroke="currentColor" 
+                                        strokeLinecap="round" 
+                                        strokeLinejoin="round" 
+                                        strokeWidth="2" 
+                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2l2 2"
+                                    />
+                                </svg>
+                                <p className="mb-2 text-sm text-gray-500">
+                                    <span className="font-semibold">Click to upload</span> or drag and drop
+                                </p>
+                                <p className="text-xs text-gray-500">SVG, PNG, JPG or GIF</p>
+                            </>
+                        )}
+                    </div>
+                    <input 
+                        id="dropzone-file" 
+                        type="file" 
+                        className="hidden" 
+                        accept="image/*" 
+                        onChange={handleImageChange} 
+                        required
+                    />
+                </label>
             </div>
+            
             <div className="mb-4">
+                <label htmlFor="measuring-unit" className="block mb-1 font-semibold">Measuring Unit</label>
                 <select
+                    id="measuring-unit"
                     value={measuringUnit}
                     onChange={(e) => setMeasuringUnit(e.target.value)}
-                    className="border border-gray-500 p-3 w-full rounded focus:outline-none focus:border-teal-500"
+                    style={inputStyle}
                 >
-                    <option value="in">Inches</option>
-                    <option value="oz">Ounces</option>
-                    <option value="kg">Kilograms</option>
+                    <option value="Inches">Inches</option>
+                    <option value="Ounces">Ounces</option>
+                    <option value="Kilograms">Kilograms</option>
                 </select>
             </div>
+
             <button
                 type="submit"
-                className="bg-teal-500 text-white w-full py-3 rounded hover:bg-teal-600 transition-colors duration-300"
+                style={buttonStyle}
+                onMouseOver={(e) => (e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor)}
+                onMouseOut={(e) => (e.currentTarget.style.backgroundColor = buttonStyle.backgroundColor)}
             >
                 Add Raw Material
             </button>

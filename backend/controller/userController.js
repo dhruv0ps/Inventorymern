@@ -37,6 +37,8 @@ const registerUser = async (req, res) => {
 };
 
 
+
+
 const getAllUsers = async (req, res) => {
   try {
       const users = await User.find();
@@ -94,6 +96,8 @@ const deleteUser = async (req, res) => {
       res.status(500).json({ message: error.message });
   }
 };
+
+
 module.exports = {
     registerUser,
     getAllUsers,

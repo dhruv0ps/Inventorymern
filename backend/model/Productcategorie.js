@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 
 
 const productcategorieschema = new mongoose.Schema({
- name : {type: String ,require:true, unique:true},
+ name : {type: String ,require:true, },
  description : {type :String,require:true}
 
 })

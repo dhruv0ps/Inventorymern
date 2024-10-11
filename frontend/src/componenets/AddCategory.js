@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';  // Import the toastify styles
 
 const AddCategory = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const token = localStorage.getItem("token");
 
   const handleAddCategory = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
 
     try {
       const response = await axios.post(
@@ -24,16 +22,36 @@ const AddCategory = () => {
         }
       );
 
-      setSuccess('Category added successfully');
+      // Show success toast
+      toast.success('Category added successfully!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      // Clear the form
       setName('');
       setDescription('');
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to add category');
+      // Show error toast
+      toast.error(error.response?.data?.message || 'Failed to add category', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
     }
   };
 
   return (
-    <div className="container w-9/12 mx-auto mt-8 p-4 max-w-xl">
+    <div className="container w-9/12 mx-auto mt-24 p-4 max-w-xl">
       <h2 className="text-3xl flex justify-center font-semibold mb-6 text-gray-800">Add New Category</h2>
 
       <form onSubmit={handleAddCategory} className="mb-8 bg-white p-6 rounded-lg shadow-md">
@@ -65,8 +83,8 @@ const AddCategory = () => {
         </button>
       </form>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-      {success && <p className="text-green-500 text-sm">{success}</p>}
+      
+      <ToastContainer />
     </div>
   );
 };

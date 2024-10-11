@@ -42,6 +42,7 @@ const addProduct = async (req, res) => {
         color,
     } = req.body;
    console.log(parentName)
+   console.log(rawMaterials);
     try {
         const newSKU = await generateNextSKU();
         const newProduct = new Products({
@@ -101,6 +102,8 @@ const getProduct = async(req,res) => {
     }
 }
 const deleteProduct = async(req,res) => {
+    const{id} = req.params
+  
         try{
                   const deletedProduct = await Products.findByIdAndDelete(id);
 
@@ -166,4 +169,25 @@ const updateProduct = async (req, res) => {
         res.status(500).json({ message: 'Error updating product', error });
     }
 };
-module.exports = { addProduct ,getProduct, deleteProduct,updateProduct };
+
+const getSingleProduct = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        // Fetch the product by ID, populating the tags
+        const product = await Products.findById(id).populate('tags');
+
+        // Check if the product exists
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // Respond with the product details
+        res.status(200).json(product);
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        res.status(500).json({ message: 'Error fetching product', error });
+    }
+};
+
+module.exports = { addProduct ,getProduct, deleteProduct,updateProduct,getSingleProduct };

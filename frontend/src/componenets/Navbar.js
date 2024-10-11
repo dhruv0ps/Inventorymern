@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import logo from "../assests/alora.png";
 const Navbar = ({ token, setToken }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
@@ -20,20 +20,26 @@ const Navbar = ({ token, setToken }) => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
+          <img 
+          src={logo}
+          alt="Logo" 
+          className="h-10 w-12 mr-3" 
+        />
             <a href="#" className="text-xl font-bold text-navbar-text">
-              MyApp
+            ALORA
             </a>
           </div>
 
-          <div className="hidden md:flex space-x-4 items-center">
-            <NavLink to="/" label="Dashboard" />
-            <NavLink to="/about" label="About" />
+          <div className="hidden md:flex space-x-4 items-center ">
+            <NavLink to="/" className="text-navbar-texthover:text-black hover:bg-gray-200 transition duration-300 px-2 py-1 rounded" label="Dashboard" />
+            {/* <NavLink to="/about" label="About" />
             <NavLink to="/services" label="Services" />
             <NavLink to="/contact" label="Contact" />
+            <NavLink to='/otherlogin' label='Otherlogin'/> */}
             {token && (
               <button 
                 onClick={handleLogout} 
-                className="text-navbar-text hover:text-gray-300 transition duration-300"
+                className="text-navbar-texthover:text-black hover:bg-gray-200 transition duration-300  px-4 py-2 rounded "
               >
                 Logout
               </button>
@@ -59,9 +65,9 @@ const Navbar = ({ token, setToken }) => {
       {isOpen && (
         <div className="md:hidden bg-navbar">
           <NavLink to="/" label="Dashboard" mobile />
-          <NavLink to="/about" label="About" mobile />
+          {/* <NavLink to="/about" label="About" mobile />
           <NavLink to="/services" label="Services" mobile />
-          <NavLink to="/contact" label="Contact" mobile />
+          <NavLink to="/contact" label="Contact" mobile /> */}
           {token && (
             <button 
               onClick={handleLogout} 
@@ -80,7 +86,7 @@ const Navbar = ({ token, setToken }) => {
 const NavLink = ({ to, label, mobile }) => (
   <a
     href={to}
-    className={`block px-4 py-2 text-navbar-text hover:bg-gray-900 ${mobile ? 'md:hidden' : 'md:flex'}`}
+    className={`block px-4 py-2 text-navbar-texthover:text-black hover:bg-gray-200 transition duration-300  rounded ${mobile ? 'md:hidden' : 'md:flex'}`}
   >
     {label}
   </a>

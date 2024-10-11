@@ -14,10 +14,10 @@ module.exports = {
         warning: '#FFD700',       // Golden Yellow
         error: '#B22222',         // Firebrick Red
         navbar: {
-          DEFAULT: '#191970',     // Midnight Blue
-          text: '#FFFFFF',        // White
-          hover: '#A9A9F5',       // Light Gray Blue
-          active: '#1E90FF',      // Dodger Blue
+          DEFAULT: '#F5F5F5',     // Navbar Background Color
+          text: 'Black',        // Original text color
+          hover: '#E5E7EB',       // Lighter Gray for hover
+          active: '#FFFFFF',      // White for active state
         },
       },
     },

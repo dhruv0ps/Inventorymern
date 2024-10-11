@@ -4,8 +4,8 @@ import CategoryList from '../componenets/CategoryList'
 
 const Categorie = () => {
   return (
-    <div className='flex space-x-52'>
-      <AddCategory/>
+    <div className='w-full'>
+      {/* <AddCategory/> */}
       <CategoryList/>
     </div>
   )

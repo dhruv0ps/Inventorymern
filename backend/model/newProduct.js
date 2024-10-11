@@ -17,7 +17,8 @@ const newproductSchema = new mongoose.Schema({
     description: { type: String, required: true },      
     regularPrice: { type: Number, required: true },
     color: { type: String,  },
-    rawMaterials: [{ name: String, quantity: Number, unit: String }], 
+    weight: {type :String },
+    rawMaterials: [{ material: String, quantity: Number, unit: String }], 
     // tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }]   
     tags: [{ type: String }],
     
