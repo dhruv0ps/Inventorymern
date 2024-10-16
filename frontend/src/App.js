@@ -13,9 +13,7 @@ import RawMaterials from './pages/RawMaterials'
 import ProductTags from './pages/ProductTags';
 import NewProduct from './pages/NewProduct';
 import ProductList from './pages/ProductList';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import Service from './pages/Service';
+
 import OtherLogin from './componenets/OtherLogin';
 import Profile from './componenets/Profile';
 import CustomerForm from './pages/CustomerForm';
@@ -44,9 +42,7 @@ function App() {
        
         <Navbar token={token} setToken={setToken} />
         <Routes>
-                        <Route path='about' element={<About />} />
-                        <Route path='services' element={<Service />} />
-                        <Route path='contact' element={<Contact />} />
+                      
                     </Routes>
         {token ? (
           <Routes>
