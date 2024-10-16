@@ -123,11 +123,18 @@ const ProductList = () => {
   };
   const downloadBarcode = (sku) => {
     const barcodeElement = document.getElementById(`barcode-${sku}`);
+    
+    // Temporarily make the barcode visible
+    barcodeElement.style.display = 'block';
+  
     html2canvas(barcodeElement).then((canvas) => {
       const link = document.createElement('a');
       link.href = canvas.toDataURL('image/png');
       link.download = `${sku}-barcode.png`;
       link.click();
+  
+      // Hide the barcode again after downloading
+      barcodeElement.style.display = 'none';
     });
   };
   return (
@@ -222,8 +229,13 @@ const ProductList = () => {
             <td rowSpan={product.variants.length} className="border px-4 py-2">{product.parentName}</td>
           )}
           <td className="border px-4 py-2">{variant.name || product.name}</td>
-          <td className="border px-4 py-2" id={`barcode-${product.SKU}`}>
-                    <Barcode value={product.SKU} className="hidden" />{variant.SKU}</td>
+          <td className="border px-4 py-2">
+  {/* Hidden Barcode Element */}
+  <div id={`barcode-${product.SKU}`} style={{ display: 'none' }}>
+    <Barcode value={product.SKU} />
+  </div>
+  {variant.SKU}
+</td>
           <td className="border px-4 py-2">{variant.price}$</td> {/* Display variant price */}
           <td className="border px-4 py-2">{variant.color}</td> {/* Display variant color */}
           <td className="border px-4 py-2">{variant.weight || product.weight}</td>
@@ -246,6 +258,7 @@ const ProductList = () => {
                     >
                        Barcode
                     </button>
+                    
           </td>
         </tr>
       ))
