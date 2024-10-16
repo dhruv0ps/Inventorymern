@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const newproductSchema = new mongoose.Schema({
     parentName: { type: String, required: true },
+    category: { type: String, required: true },
     variants: [
         {
             size: { type: String, required: true },
@@ -10,6 +11,7 @@ const newproductSchema = new mongoose.Schema({
             price: { type: Number, required: true },
             weight: { type: Number, required: true },
             color: { type: String, required: true },
+            childName: { type: String, required: true },
             rawMaterials: [{ material: String, quantity: Number, unit: String }],
             tags: [{ type: String }]
         }

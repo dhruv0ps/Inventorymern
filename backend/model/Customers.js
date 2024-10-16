@@ -72,7 +72,11 @@ const CustomerSchema = new mongoose.Schema({
             default: false, 
           },
 
-      }]
+      }],
+      isActive: {
+        type: Boolean,
+        default: true,  
+    }
 },{ timestamps: true })
 
 module.exports = mongoose.model("Customer",CustomerSchema)

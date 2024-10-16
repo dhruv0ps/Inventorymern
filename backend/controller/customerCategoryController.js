@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const CustomerCategory = require('../model/CustomerCategory');
 
 // Create a new category, enforcing the limit of 3 categories
@@ -5,11 +6,7 @@ const createCategory = async (req, res) => {
     const { customercategoryId, customercategoryName, customercategoryDescription } = req.body;
     console.log(customercategoryId)
     try {
-        const count = await CustomerCategory.countDocuments();
-
-        if (count >= 3) {
-            return res.status(400).json({ message: 'Cannot add more than three categories' });
-        }
+        
 
         const newcustomerCategory = new CustomerCategory({ 
             customercategoryId, 
@@ -18,7 +15,7 @@ const createCategory = async (req, res) => {
         });
         
         await newcustomerCategory.save();
-        res.status(201).json({ message: 'Category created successfully', newCategory });
+        res.status(201).json({ message: 'Category created successfully', newcustomerCategory }); // Fixed variable name
     } catch (error) {
         console.error(error); 
         res.status(500).json({ message: 'Failed to create category', error });
@@ -36,14 +33,14 @@ const getCategories = async (req, res) => {
     }
 };
 
-
+// Update a category by ID
 const updateCategory = async (req, res) => {
-    const { customercategoryId } = req.body;
+    const { id } = req.params;
     const { customercategoryName, customercategoryDescription } = req.body;
-     console.log
+     
     try {
-        const updatedCategory = await CustomerCategory.findOneAndUpdate(
-            { customercategoryId },
+        const updatedCategory = await CustomerCategory.findByIdAndUpdate(
+        id, 
             { customercategoryName, customercategoryDescription },
             { new: true }
         );
@@ -59,12 +56,12 @@ const updateCategory = async (req, res) => {
     }
 };
 
-
+// Delete a category by ID
 const deleteCategory = async (req, res) => {
-    const { customercategoryId } = req.body;
+    const { id } = req.params;
 
     try {
-        const deletedCategory = await CustomerCategory.findOneAndDelete({ customercategoryId });
+        const deletedCategory = await CustomerCategory.findByIdAndDelete(id); // Use findByIdAndDelete for MongoDB _id
 
         if (!deletedCategory) {
             return res.status(404).json({ message: 'Category not found' });
@@ -77,10 +74,28 @@ const deleteCategory = async (req, res) => {
     }
 };
 
+// Get a single category by ID
+const getsingleCategory = async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        const singleCategory = await CustomerCategory.findById(id);
+        
+        if (!singleCategory) {
+            return res.status(404).json({ message: 'Category not found' });
+        }
+
+        res.status(200).json(singleCategory);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Failed to find category', error });
+    }
+};
+
 module.exports = {
     createCategory,
     getCategories,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getsingleCategory
 };
-

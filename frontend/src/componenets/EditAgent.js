@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const provinces = [
   'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick', 
@@ -8,7 +9,10 @@ const provinces = [
   'Northwest Territories', 'Nunavut', 'Yukon',
 ];
 
-const NewAgent = () => {
+const EditAgent = () => {
+  const { id } = useParams();  // Get agentId from URL
+  const navigate = useNavigate();
+
   const [addresses, setAddresses] = useState([{ 
     id: Date.now(), unit: '', buzzCode: '', street: '', 
     province: '', postalCode: '', isDefault: false 
@@ -22,6 +26,36 @@ const NewAgent = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    // Fetch agent data when component mounts
+    const fetchAgentData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/agent/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const agentData = response.data;
+        setFormData({
+          firstName: agentData.firstName,
+          lastName: agentData.lastName,
+          cell: agentData.cell,
+          emailID: agentData.emailID,
+          commissionPercentage: agentData.commissionPercentage,
+        });
+
+        setAddresses(agentData.addresses);
+      } catch (error) {
+        console.error('Error fetching agent data:', error);
+        setErrorMessage('Failed to load agent data');
+      }
+    };
+
+    fetchAgentData();
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -60,7 +94,7 @@ const NewAgent = () => {
     const token = localStorage.getItem('token'); 
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/agent`, {
+      const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/agent/${id}`, {
         ...formData,
         addresses: addresses.map(address => ({
           unit: address.unit,
@@ -77,33 +111,27 @@ const NewAgent = () => {
         },
       });
 
-      if (response.status === 201) {
-        setSuccessMessage("Agent created successfully");
-        setFormData({
-          firstName: '', lastName: '', cell: '', emailID: '',
-          commissionPercentage: '',
-        });
-        setAddresses([{ 
-          id: Date.now(), unit: '', buzzCode: '', street: '', 
-          province: '', postalCode: '', isDefault: false 
-        }]);
+      if (response.status === 200) {
+        setSuccessMessage("Agent updated successfully");
+        navigate("/agentlist");  // Redirect to the agent list after successful update
       } else {
-        setErrorMessage("There was an issue creating the agent");
+        setErrorMessage("There was an issue updating the agent");
       }
     } catch (error) {
-      console.error("Error creating agent:", error);
-      setErrorMessage("Failed to create agent");
+      console.error("Error updating agent:", error);
+      setErrorMessage("Failed to update agent");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center w-full h-screen overflow-y-scroll p-4 mt-5  ">
-  <form onSubmit={handleSubmit} className="max-w-4xl w-full p-4 space-y-4 shadow-lg rounded-lg bg-navbar">
-    <h2 className="text-xl font-semibold">New Agent Information</h2>
+    <div className="flex justify-center items-center w-full h-screen overflow-y-scroll p-4 mt-5">
+      <form onSubmit={handleSubmit} className="max-w-4xl w-full p-4 space-y-4 shadow-lg rounded-lg bg-navbar">
+        <h2 className="text-xl font-semibold">Edit Agent Information</h2>
 
-    <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+        {/* Form fields similar to NewAgent, but pre-populated */}
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
       <div>
         <label className="block">First Name *</label>
         <input
@@ -281,8 +309,7 @@ const NewAgent = () => {
     )}
   </form>
 </div>
-
   );
 };
 
-export default NewAgent;
+export default EditAgent;

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const rawMaterialSchema = new mongoose.Schema({
-    name: { type: String, required: true },
+    material: { type: String, required: true },
     description: { type: String, required: true },
     image: { type: String, required: true },
     measuringUnit: { type: String, required: true },

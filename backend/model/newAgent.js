@@ -28,12 +28,9 @@ const newAgentSchema = new mongoose.Schema({
     required: true 
   },
   commissionPercentage: { type: Number, min: 0, max: 100 }, 
-  status: {
-    type: String,
-    enum: ['active', 'inactive'], 
-    
-    default: 'active' 
-    
+  isActive: {
+    type: Boolean,
+    default: true,  
   },
 }, { timestamps: true });
 

@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import Modal from './Modal'; // Adjust the import based on your file structure
+import { Link, useNavigate } from 'react-router-dom';
 
 const RawMaterialsList = () => {
     const [rawMaterials, setRawMaterials] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [isModalOpen, setModalOpen] = useState(false);
-    const [formData, setFormData] = useState({});
-    const [selectedMaterialId, setSelectedMaterialId] = useState(null);
-    const [image, setImage] = useState(null);
     
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5); // Set the number of items per page
     const [totalPages, setTotalPages] = useState(0);
+    
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchRawMaterials();
@@ -37,47 +34,8 @@ const RawMaterialsList = () => {
     };
 
     const handleEditClick = (rawMaterial) => {
-        setFormData(rawMaterial);
-        setSelectedMaterialId(rawMaterial._id);
-        setModalOpen(true);
-    };
-
-    const handleFormChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleImageChange = (e) => {
-        setImage(e.target.files[0]);
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const formDataToSubmit = new FormData();
-
-        // Append the form data fields
-        Object.keys(formData).forEach((key) => {
-            formDataToSubmit.append(key, formData[key]);
-        });
-
-        // Append the image file if it exists
-        if (image) {
-            formDataToSubmit.append('image', image);
-        }
-
-        try {
-            await axios.put(`${process.env.REACT_APP_API_URL}/api/raw-materials/${selectedMaterialId}`, formDataToSubmit, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            alert('Raw Material updated successfully!');
-            fetchRawMaterials(); // Refresh the list
-            setModalOpen(false); // Close the modal
-        } catch (error) {
-            console.error('Error updating raw material:', error);
-            alert('Failed to update raw material. Please try again.');
-        }
+        // Redirect to edit page instead of opening a modal
+        navigate(`/edit-raw-material/${rawMaterial._id}`);
     };
 
     const handleDeleteClick = async (id) => {
@@ -113,7 +71,7 @@ const RawMaterialsList = () => {
             <div className="mb-4 flex justify-between items-center">
                 <span className='font-bold text-2xl'>Raw Materials</span>
                 <Link to="/addnewraw" className='mt-2'>
-                    <button className="px-2 py-2 bg-blue-500 text-white rounded">
+                    <button className="px-2 py-2 mr-5 bg-blue-500 text-white rounded">
                         Add New Raw Material
                     </button>
                 </Link>
@@ -129,7 +87,7 @@ const RawMaterialsList = () => {
                     <table className="min-w-full bg-white border border-gray-200">
                         <thead>
                             <tr className="bg-gray-300 border-b">
-                                <th className="py-2 px-4 text-left border-r">Logo</th>
+                                <th className="py-2 px-4 text-left border-r">Raw material Image</th>
                                 <th className="py-2 px-4 text-left border-r">Material Name</th>
                                 <th className="py-2 px-4 text-left border-r">Description</th>
                                 <th className="py-2 px-4 text-left border-r">Measuring Unit</th>
@@ -152,7 +110,7 @@ const RawMaterialsList = () => {
                                             />
                                         </a>
                                     </td>
-                                    <td className="py-4 px-4 border-r">{rawMaterial.name}</td>
+                                    <td className="py-4 px-4 border-r">{rawMaterial.material}</td>
                                     <td className="py-4 px-4 border-r">{rawMaterial.description}</td>
                                     <td className="py-4 px-4 border-r">{rawMaterial.measuringUnit}</td>
                                     <td className="py-4 px-4">
@@ -209,16 +167,6 @@ const RawMaterialsList = () => {
                     </button>
                 </div>
             )}
-
-            {/* Modal for editing raw material */}
-            <Modal 
-                isOpen={isModalOpen} 
-                onClose={() => setModalOpen(false)} 
-                onSubmit={handleSubmit} 
-                formData={formData} 
-                handleFormChange={handleFormChange} 
-                handleImageChange={handleImageChange} 
-            />
         </div>
     );
 };

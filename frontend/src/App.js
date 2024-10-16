@@ -8,7 +8,7 @@ import Dashboard from './pages/Dashboard';
 import UserRegistrationForm from './pages/UserRegistrationForm';
 import AddUser from './pages/AddUser';
 import ShowUsers from './pages/ShowUsers';
-import  Categorie from './pages/Categorie';
+
 import RawMaterials from './pages/RawMaterials'
 import ProductTags from './pages/ProductTags';
 import NewProduct from './pages/NewProduct';
@@ -22,13 +22,19 @@ import CustomerForm from './pages/CustomerForm';
 import CustomerList from './pages/CustomerList';
 import NewAgent from './pages/NewAgent';
 import AgentList from './pages/AgentList';
-import CategoryManagement from './pages/CategoryManagement';
+
 import AddCategory from './componenets/AddCategory';
 import CategoryList from './componenets/CategoryList';
 import RawMaterialsList from './componenets/RawMaterialList';
 import RawMaterialForm from './componenets/RawMaterialForm';
 import EditProduct from './componenets/EditProduct';
-
+import Customercategorylist from './componenets/Customercategorylist';
+import CreateCategory from './componenets/CreateCategory';
+import EditCustomercategory from './componenets/EditCustomercategory';
+import CategoryManagement from './componenets/CategoryManagement';
+import EditRawMaterialForm from './componenets/EditRawMaterialForm';
+import Customeredit from './componenets/Customeredit';
+import EditAgent from './componenets/EditAgent';
 function App() {
  const [token, setToken] = useState(localStorage.getItem('token') || ''); 
 
@@ -61,7 +67,13 @@ function App() {
               <Route path = "managecustomers" element={<CustomerList/>}/>
               <Route path="addagent" element={<NewAgent/>}/>
               <Route path='agentlist' element={<AgentList/>}/>
-              <Route path='managecategory' element={<CategoryManagement/>}/>  
+              <Route path='customercategory' element={<CategoryManagement/>}/>
+              <Route path="categories" element={<Customercategorylist/>}/>
+              <Route path="createcategory" element={<CreateCategory/>}/>
+              <Route path="edit-category/:id" element={<EditCustomercategory/>}/>
+              <Route path="edit-raw-material/:id" element={<EditRawMaterialForm/>}/>
+              <Route path="editcustomer/:id" element={<Customeredit/>}/>
+              <Route path='editagent/:id' element={<EditAgent/>}/>
             </Route>
           </Routes>
         ) : (

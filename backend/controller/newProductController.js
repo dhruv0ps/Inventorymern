@@ -42,6 +42,7 @@ const addProduct = async (req, res) => {
         construction,
         rawMaterials,
         tags,
+        category,
         color,
     } = req.body;
 
@@ -65,6 +66,7 @@ const addProduct = async (req, res) => {
             rawMaterials,
             tags,
             color,
+            category,
         });
 
         await newProduct.save();
@@ -134,14 +136,24 @@ const updateProduct = async (req, res) => {
         rawMaterials,
         tags,
         color,
+        category
     } = req.body;
-
+     console.log(tags)
     try {
+        // Fetch the existing product from the database
+        const existingProduct = await Products.findById(id);
+
+        if (!existingProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // Map the new variants but keep the existing SKU constant
         const updatedVariants = variants.map((variant, index) => ({
             ...variant,
-            SKU: generateChildSKU(req.body.SKU, index) // Ensure child SKU is generated correctly
+            SKU: existingProduct.variants[index]?.SKU || generateChildSKU(existingProduct.SKU, index) // Keep existing SKU or generate if needed
         }));
 
+        // Update the product without modifying the SKU
         const updatedProduct = await Products.findByIdAndUpdate(
             id,
             {
@@ -156,13 +168,10 @@ const updateProduct = async (req, res) => {
                 rawMaterials,
                 tags,
                 color,
+                category
             },
             { new: true, runValidators: true }
         );
-
-        if (!updatedProduct) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
 
         res.status(200).json({ message: 'Product updated successfully!', product: updatedProduct });
     } catch (error) {
@@ -170,6 +179,7 @@ const updateProduct = async (req, res) => {
         res.status(500).json({ message: 'Error updating product', error });
     }
 };
+
 
 const getSingleProduct = async (req, res) => {
     const { id } = req.params;

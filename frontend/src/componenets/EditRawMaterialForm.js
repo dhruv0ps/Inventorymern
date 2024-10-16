@@ -1,15 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
-const RawMaterialForm = ({ onRawMaterialAdded }) => {
+const EditRawMaterialForm = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [material, setMaterial] = useState('');
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [measuringUnit, setMeasuringUnit] = useState('in');
+    const [error, setError] = useState('');
     const token = localStorage.getItem('token');
+
+    useEffect(() => {
+        const fetchRawMaterial = async () => {
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/raw-materials/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const rawMaterial = response.data;
+                setMaterial(rawMaterial.material);
+                setDescription(rawMaterial.description);
+                setMeasuringUnit(rawMaterial.measuringUnit);
+                setImagePreview(rawMaterial.imageUrl);
+            } catch (err) {
+                setError(err.response?.data?.message || 'Failed to fetch raw material data');
+            }
+        };
+
+        fetchRawMaterial();
+    }, [id, token]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -19,107 +41,76 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
         }
     };
 
-    const handleAddRawMaterial = async (e) => {
+    const handleEditRawMaterial = async (e) => {
         e.preventDefault();
+        setError('');
 
         const formData = new FormData();
         formData.append('material', material);
         formData.append('description', description);
-        formData.append('image', image);
+        if (image) formData.append('image', image);
         formData.append('measuringUnit', measuringUnit);
 
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/raw-materials`, formData, {
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/raw-materials/${id}`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            toast.success('Raw material added successfully');
-            onRawMaterialAdded(response.data);
-            resetForm();
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to add raw material');
+
+            if (response.status === 200 || response.status === 204) {
+                toast.success('Raw material updated successfully');
+                navigate('/rawmaterial');
+            } else {
+                toast.error(`Unexpected status code: ${response.status}`);
+            }
+        } catch (err) {
+            console.error('Error updating raw material:', err);
+            setError(err.response?.data?.message || 'Failed to update raw material');
+            toast.error('Failed to update raw material');
         }
     };
 
-    const resetForm = () => {
-        setMaterial('');
-        setDescription('');
-        setImage(null);
-        setImagePreview(null);
-        setMeasuringUnit('in');
-    };
-
-    // Inline styles
-    const formStyle = {
-        backgroundColor: '#f0f0f0',
-        padding: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.1)',
-        overflowY: 'auto',
-        maxHeight: '500px',
-    };
-
-    const inputStyle = {
-        width: '100%',
-        padding: '10px',
-        border: '1px solid #ccc',
-        borderRadius: '4px',
-        marginBottom: '10px',
-        boxSizing: 'border-box',
-    };
-
-    const buttonStyle = {
-        backgroundColor: '#007bff',
-        color: 'white',
-        padding: '12px',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-        width: '100%',
-        transition: 'background-color 0.3s ease',
-    };
-
-    const buttonHoverStyle = {
-        backgroundColor: '#0056b3',
+    const onCancel = () => {
+        navigate('/raw-materials');  // Navigate back to raw materials list
     };
 
     return (
-        <>
-            <form onSubmit={handleAddRawMaterial} style={formStyle} className="mb-8">
+        <div className="container w-2/6 mx-auto mt-5 px-4">
+            <form onSubmit={handleEditRawMaterial} className="bg-gray-100 p-6 rounded-md shadow-md">
                 <div className="form-group mb-4">
-                    <label htmlFor="material-name" className="block mb-1 font-semibold">Material Name</label>
+                    <label htmlFor="material-name" className="block mb-1 font-semibold">Material</label>
                     <input
                         type="text"
                         id="material-name"
                         placeholder="Enter material name"
                         value={material}
-                        onChange={(e) => setMaterial(e.target.value)}
-                        style={inputStyle}
+                        onChange={(e) => setMaterial(e.target.value)} 
+                        className="mt-1 p-2 border border-gray-300 rounded w-full"
                         required
                     />
                 </div>
 
                 <div className="form-group mb-4">
-                    <label htmlFor="material-description" className="block mb-1 font-semibold">Material Description</label>
+                    <label htmlFor="material-description" className="block mb-1 font-semibold">Description</label>
                     <input
                         type="text"
                         id="material-description"
                         placeholder="Enter material description"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        style={inputStyle}
+                        className="mt-1 p-2 border border-gray-300 rounded w-full"
                         required
                     />
                 </div>
 
-                {/* Custom image upload label */}
-                <div className="mb-4">
+                <div className="mb-4 flex items-center justify-center w-full">
                     <label 
-                        htmlFor="image-upload" 
-                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-100 transition duration-300"
-                    >Upload raw material image
+                        htmlFor="dropzone-file" 
+                        className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-white hover:bg-gray-100 transition duration-300"
+                    >
+                        <span className="text-center font-semibold mb-2">Upload Raw Material Image</span>
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                             {imagePreview ? (
                                 <img src={imagePreview} alt="Uploaded Preview" className="h-auto max-h-32 object-cover mb-2" />
@@ -148,12 +139,11 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
                             )}
                         </div>
                         <input 
-                            id="image-upload" 
+                            id="dropzone-file" 
                             type="file" 
                             className="hidden" 
                             accept="image/*" 
                             onChange={handleImageChange} 
-                            required
                         />
                     </label>
                 </div>
@@ -164,7 +154,7 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
                         id="measuring-unit"
                         value={measuringUnit}
                         onChange={(e) => setMeasuringUnit(e.target.value)}
-                        style={inputStyle}
+                        className="mt-1 p-2 border border-gray-300 rounded w-full"
                     >
                         <option value="Inches">Inches</option>
                         <option value="Ounces">Ounces</option>
@@ -172,18 +162,16 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
                     </select>
                 </div>
 
-                <button
-                    type="submit"
-                    style={buttonStyle}
-                    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = buttonHoverStyle.backgroundColor)}
-                    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = buttonStyle.backgroundColor)}
-                >
-                    Add Raw Material
+                <button type="submit" className='bg-blue-500 text-white p-[12px] rounded w-full'>
+                    Update Raw Material
+                </button>
+
+                <button type='button' onClick={onCancel} className='bg-red-500 text-white p-[12px] rounded w-full mt-[10px]'>
+                    Cancel
                 </button>
             </form>
-            <ToastContainer />
-        </>
+        </div>
     );
 };
 
-export default RawMaterialForm;
+export default EditRawMaterialForm;

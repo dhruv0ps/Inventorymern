@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import Barcode from 'react-barcode';
+import html2canvas from 'html2canvas';
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -13,7 +14,7 @@ const ProductList = () => {
   });
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage] = useState(20);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const ProductList = () => {
 
   const filterProducts = (filters) => {
     let filtered = products;
-
+  
     if (filters.search) {
       filtered = filtered.filter((product) =>
         product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
@@ -51,21 +52,37 @@ const ProductList = () => {
         product.parentName?.toLowerCase().includes(filters.search.toLowerCase())
       );
     }
-
+  
     if (filters.color) {
-      filtered = filtered.filter((product) => product.color === filters.color);
+      filtered = filtered.filter((product) => {
+        if (product.variants.length > 0) {
+          return product.variants.some(variant => variant.color === filters.color);
+        }
+        return product.color === filters.color;
+      });
     }
-
+  
     if (filters.minPrice) {
-      filtered = filtered.filter((product) => product.regularPrice >= Number(filters.minPrice));
+      filtered = filtered.filter((product) => {
+        if (product.variants.length > 0) {
+          return product.variants.some(variant => variant.price >= Number(filters.minPrice));
+        }
+        return product.regularPrice >= Number(filters.minPrice);
+      });
     }
-
+  
     if (filters.maxPrice) {
-      filtered = filtered.filter((product) => product.regularPrice <= Number(filters.maxPrice));
+      filtered = filtered.filter((product) => {
+        if (product.variants.length > 0) {
+          return product.variants.some(variant => variant.price <= Number(filters.maxPrice));
+        }
+        return product.regularPrice <= Number(filters.maxPrice);
+      });
     }
-
+  
     setFilteredProducts(filtered);
   };
+  
 
   const handleDelete = async (productId) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
@@ -104,14 +121,22 @@ const ProductList = () => {
       setCurrentPage(currentPage - 1);
     }
   };
-
+  const downloadBarcode = (sku) => {
+    const barcodeElement = document.getElementById(`barcode-${sku}`);
+    html2canvas(barcodeElement).then((canvas) => {
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = `${sku}-barcode.png`;
+      link.click();
+    });
+  };
   return (
-    <div className="w-full px-4">
+    <div className="w-full px-8 overflow-y-auto">
       <div className="flex justify-between mt-10 items-center mb-4">
         <div className="text-2xl font-bold">Product List</div>
         <Link
           to="/newproduct"
-          className="px-4 py-2 mt-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+          className="px-4 py-2 mt-2  bg-blue-500 text-white rounded hover:bg-blue-600 transition"
         >
           Add New Product
         </Link>
@@ -184,7 +209,7 @@ const ProductList = () => {
                 <th className="px-4 py-2 text-left">SKU</th>
                 <th className="px-4 py-2 text-left">Regular Price</th>
                 <th className="px-4 py-2 text-left">Color</th>
-                <th className="px-4 py-2 text-left">Weight</th>
+                <th className="px-4 py-2 text-left">Weight(lbs)</th>
                 <th className="px-4 py-2 text-left">Actions</th>
               </tr>
             </thead>
@@ -197,8 +222,9 @@ const ProductList = () => {
             <td rowSpan={product.variants.length} className="border px-4 py-2">{product.parentName}</td>
           )}
           <td className="border px-4 py-2">{variant.name || product.name}</td>
-          <td className="border px-4 py-2">{variant.SKU}</td>
-          <td className="border px-4 py-2">{variant.price}</td> {/* Display variant price */}
+          <td className="border px-4 py-2" id={`barcode-${product.SKU}`}>
+                    <Barcode value={product.SKU} className="hidden" />{variant.SKU}</td>
+          <td className="border px-4 py-2">{variant.price}$</td> {/* Display variant price */}
           <td className="border px-4 py-2">{variant.color}</td> {/* Display variant color */}
           <td className="border px-4 py-2">{variant.weight || product.weight}</td>
           <td className="border px-4 py-2 flex space-x-2">
@@ -214,6 +240,12 @@ const ProductList = () => {
             >
               Delete
             </button>
+            <button 
+                      onClick={() => downloadBarcode(product.SKU)} 
+                      className="ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                    >
+                       Barcode
+                    </button>
           </td>
         </tr>
       ))

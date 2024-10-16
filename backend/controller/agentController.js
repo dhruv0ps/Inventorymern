@@ -84,24 +84,40 @@ const updateAgent = async (req, res) => {
   }
 };
 
-
-const statusagent = async (req, res) => {
+const toggleAgentStatus = async (req, res) => {
   const { id } = req.params; // Get the agent ID from the request parameters
-  const { status } = req.body; // Get the desired status from the request body
+
+ try{
+  const agent = await Agent.findById(id);
+  if(!agent){
+    return res.status(404).json({ message: 'Agent not found' }); 
+  }
+
+  agent.isActive = !agent.isActive;
+  await agent.save();
+  const status = agent.isActive ? "activated" : "deactivated";
+  return res.status(200).json({message : `Agent ${status} suceessfully `,agent})
+ } catch (error) {
+  console.error('Error toggling customer status:', error);
+  return res.status(500).json({ message: 'Failed to toggle customer status' });
+}
+};
+
+const getAgentById = async (req, res) => {
+  const { id } = req.params; // Get the agent ID from the request parameters
 
   try {
-    const result = await Agent.updateOne({ _id: id }, { $set: { status } });
-
-    if (result.modifiedCount === 0) {
-      return res.status(404).json({ message: "Agent not found or status unchanged" });
+    const agent = await Agent.findById(id);
+    
+    if (!agent) {
+      return res.status(404).json({ message: "Agent not found" });
     }
 
-    res.status(200).json({ message: `Agent ${status} successfully` });
+    res.status(200).json(agent);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error updating agent status", error: error.message });
+    res.status(500).json({ message: 'Failed to fetch agent', error: error.message });
   }
-}
+};
 
-
-module.exports = { createAgent, getAgent, deleteAgent, updateAgent,statusagent };
+module.exports = { createAgent, getAgent, deleteAgent, updateAgent,toggleAgentStatus,getAgentById };
