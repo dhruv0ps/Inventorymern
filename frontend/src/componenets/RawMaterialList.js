@@ -67,9 +67,9 @@ const RawMaterialsList = () => {
     const currentMaterials = rawMaterials.slice(indexOfFirstMaterial, indexOfLastMaterial);
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto mt-10 ml-4   p-4">
             <div className="mb-4 flex justify-between items-center">
-                <span className='font-bold text-2xl'>Raw Materials</span>
+                <span className='font-bold text-2xl ml-5 '>Raw Materials</span>
                 <Link to="/addnewraw" className='mt-2'>
                     <button className="px-2 py-2 mr-5 bg-blue-500 text-white rounded">
                         Add New Raw Material
@@ -140,7 +140,7 @@ const RawMaterialsList = () => {
                     <button 
                         onClick={() => handlePageChange(currentPage - 1)} 
                         disabled={currentPage === 1} 
-                        className="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded disabled:opacity-50"
+                        className={`px-3 py-1 border rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600 transition duration-300'}`}
                     >
                         Previous
                     </button>
@@ -161,7 +161,7 @@ const RawMaterialsList = () => {
                     <button 
                         onClick={() => handlePageChange(currentPage + 1)} 
                         disabled={currentPage === totalPages} 
-                        className="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded disabled:opacity-50"
+                        className={`px-3 py-1 border rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600 transition duration-300'}`}
                     >
                         Next
                     </button>

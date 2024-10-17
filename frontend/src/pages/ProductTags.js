@@ -63,7 +63,7 @@ const ProductTags = () => {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
-        <div className="container mx-auto mt-8 p-4 max-w-full">
+        <div className="container mx-auto mt-8 p-4 ml-4 mr-4  max-w-full">
             <h2 className="text-3xl flex justify-center font-semibold mb-6 text-gray-800">Product Tags</h2>
 
             <div className="flex mb-4">

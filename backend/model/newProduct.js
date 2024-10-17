@@ -13,7 +13,8 @@ const newproductSchema = new mongoose.Schema({
             color: { type: String, required: true },
             childName: { type: String, required: true },
             rawMaterials: [{ material: String, quantity: Number, unit: String }],
-            tags: [{ type: String }]
+            tags: [{ type: String }],
+            isActive: { type: Boolean, default: true },
         }
     ],
     SKU: { type: String, required: true, unique: true }, // Parent SKU

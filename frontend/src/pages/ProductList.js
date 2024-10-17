@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Barcode from 'react-barcode';
 import html2canvas from 'html2canvas';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -30,6 +32,7 @@ const ProductList = () => {
       setFilteredProducts(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
+      toast.error('Error fetching products');
     } finally {
       setLoading(false);
     }
@@ -96,11 +99,23 @@ const ProductList = () => {
     }
   };
 
+  const toggleVariantStatus = async (productId, variantId) => {
+    try {
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/products/${productId}/variants/${variantId}/toggleActive`);
+      alert('Variant status updated successfully');
+      fetchProducts(); // Refresh the product list
+      toast.success("Variant status updated successfully")
+    } catch (error) {
+      console.error('Error updating variant status:', error);
+    }
+  };
+  
+
   const goToEditPage = (product) => {
     navigate(`/editproduct/${product._id}`);
   };
 
-  // Pagination logic
+ 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
@@ -109,6 +124,8 @@ const ProductList = () => {
   const handlePagination = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -124,7 +141,7 @@ const ProductList = () => {
   const downloadBarcode = (sku) => {
     const barcodeElement = document.getElementById(`barcode-${sku}`);
     
-    // Temporarily make the barcode visible
+   
     barcodeElement.style.display = 'block';
   
     html2canvas(barcodeElement).then((canvas) => {
@@ -133,9 +150,11 @@ const ProductList = () => {
       link.download = `${sku}-barcode.png`;
       link.click();
   
-      // Hide the barcode again after downloading
+      
       barcodeElement.style.display = 'none';
     });
+    
+    
   };
   return (
     <div className="w-full px-8 overflow-y-auto">
@@ -149,7 +168,7 @@ const ProductList = () => {
         </Link>
       </div>
 
-      {/* Filters */}
+     
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         <input
           type="text"
@@ -203,14 +222,14 @@ const ProductList = () => {
         />
       </div>
 
-      {/* Product Table */}
-      <div className="overflow-x-auto">
+     
+      <div className="overflow-x-auto ">
         {loading ? (
           <div className="text-center py-4">Loading products...</div>
         ) : (
           <table className="min-w-full table-auto border-collapse">
             <thead>
-              <tr className="bg-gray-100">
+              <tr className="bg-gray-200">
                 <th className="px-4 py-2 text-left">Parent Name</th>
                 <th className="px-4 py-2 text-left">Child Name</th>
                 <th className="px-4 py-2 text-left">SKU</th>
@@ -224,20 +243,20 @@ const ProductList = () => {
   {currentProducts.map((product) => (
     product.variants.length > 0 ? (
       product.variants.map((variant, index) => (
-        <tr key={variant.SKU + index} className="border-b">
+        <tr key={variant.SKU + index} className="border-b  hover:bg-gray-100">
           {index === 0 && (
             <td rowSpan={product.variants.length} className="border px-4 py-2">{product.parentName}</td>
           )}
-          <td className="border px-4 py-2">{variant.name || product.name}</td>
+          <td className="border px-4 py-2">{variant.childName || product.name}</td>
           <td className="border px-4 py-2">
-  {/* Hidden Barcode Element */}
+  
   <div id={`barcode-${product.SKU}`} style={{ display: 'none' }}>
     <Barcode value={product.SKU} />
   </div>
   {variant.SKU}
 </td>
-          <td className="border px-4 py-2">{variant.price}$</td> {/* Display variant price */}
-          <td className="border px-4 py-2">{variant.color}</td> {/* Display variant color */}
+          <td className="border px-4 py-2">{variant.price}$</td>
+          <td className="border px-4 py-2">{variant.color}</td>
           <td className="border px-4 py-2">{variant.weight || product.weight}</td>
           <td className="border px-4 py-2 flex space-x-2">
             <button
@@ -254,10 +273,16 @@ const ProductList = () => {
             </button>
             <button 
                       onClick={() => downloadBarcode(product.SKU)} 
-                      className="ml-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                      className="ml-2 px-2 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
                     >
                        Barcode
                     </button>
+                    <button 
+             onClick={() => toggleVariantStatus(product._id, variant._id)} 
+              className={`ml-2 px-2 py-2 ${variant.isActive ? 'bg-yellow-500' : 'bg-green-500'} text-white rounded hover:${variant.isActive ? 'bg-yellow-600' : 'bg-green-600'} transition`}
+            >
+              {variant.isActive ? 'Deactivate' : 'Activate'}
+            </button>
                     
           </td>
         </tr>
@@ -293,26 +318,33 @@ const ProductList = () => {
         )}
       </div>
 
-      {/* Pagination */}
-      <div className="flex justify-between mt-4">
-        <button
-          onClick={handlePreviousPage}
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
-        <div className="flex items-center">
-          Page {currentPage} of {totalPages}
-        </div>
-        <button
-          onClick={handleNextPage}
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
+    
+      <div className="flex justify-center mt-4">
+                <button
+                    onClick={() => currentPage > 1 && paginate(currentPage - 1)}
+                    className={`px-3 py-1 border rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600 transition duration-300'}`}
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </button>
+                {Array.from({ length: totalPages }).map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => paginate(index + 1)}
+                        className={`mx-1 px-3 py-1 border rounded ${currentPage === index + 1 ? 'bg-blue-500 text-white' : 'hover:bg-blue-500 hover:text-white transition duration-300'}`}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
+                <button
+                    onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+                    className={`px-3 py-1 border rounded ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600 transition duration-300'}`}
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </button>
+            </div>
+      <ToastContainer/>
     </div>
   );
 };

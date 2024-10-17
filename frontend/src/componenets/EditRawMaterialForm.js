@@ -77,8 +77,8 @@ const EditRawMaterialForm = () => {
     };
 
     return (
-        <div className="container w-2/6 mx-auto mt-5 px-4">
-            <form onSubmit={handleEditRawMaterial} className="bg-gray-100 p-6 rounded-md shadow-md">
+        <div className="container w-2/6 bg-background    mx-auto mt-5 px-4">
+            <form onSubmit={handleEditRawMaterial} className="bg-gray-100 p-6 overflow-y-auto scrollbar rounded-md shadow-md">
                 <div className="form-group mb-4">
                     <label htmlFor="material-name" className="block mb-1 font-semibold">Material</label>
                     <input

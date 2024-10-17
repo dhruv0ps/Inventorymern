@@ -22,7 +22,7 @@ const Navbar = ({ token, setToken }) => {
     <nav className="bg-navbar shadow-lg">
       <div className="w-full mx-auto">
         <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center ml-7">
+          <div className="flex items-center ml-7 ">
             <img 
               src={logo}
               alt="Logo" 

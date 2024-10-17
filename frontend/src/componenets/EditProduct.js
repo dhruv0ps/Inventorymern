@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const EditProduct = () => {
-    const { id } = useParams(); // Fetching productId from URL parameters
+    const { id } = useParams(); 
     const [parentName, setParentName] = useState('');
     const [variants, setVariants] = useState([{
         size: '',
@@ -95,10 +95,26 @@ const EditProduct = () => {
     };
 
     const handleRawMaterialChange = (variantIndex, materialIndex, field, value) => {
-        const newVariants = [...variants];
-        newVariants[variantIndex].rawMaterials[materialIndex][field] = value;
-        setVariants(newVariants);
+        setVariants(prevVariants => {
+            const updatedVariants = [...prevVariants];
+    
+            if (field === 'material') {
+                const selectedMaterial = rawMaterials.find(raw => raw.material === value);
+                if (selectedMaterial) {
+                    updatedVariants[variantIndex].rawMaterials[materialIndex] = {
+                        material: selectedMaterial.material,
+                        quantity: updatedVariants[variantIndex].rawMaterials[materialIndex].quantity,
+                        unit: selectedMaterial.measuringUnit,
+                    };
+                }
+            } else {
+                updatedVariants[variantIndex].rawMaterials[materialIndex][field] = value;
+            }
+    
+            return updatedVariants;
+        });
     };
+    
 
     const handleTagChange = (index, e) => {
         const selectedTagId = e.target.value;
@@ -371,7 +387,7 @@ const EditProduct = () => {
       ))}
     </select>
   </div>
-  <div>
+  {/* <div>
     <label className="block text-gray-700 font-semibold">SKU:</label>
     <input
       type="text"
@@ -380,7 +396,7 @@ const EditProduct = () => {
       required
       className="mt-1 p-2 border border-gray-300 rounded w-full"
     />
-  </div>
+  </div> */}
 </div>
 
 

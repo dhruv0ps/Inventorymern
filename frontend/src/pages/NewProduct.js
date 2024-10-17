@@ -264,7 +264,9 @@ const handleRemoveTag = (index, tagToRemove) => {
                 <div className="mb-4">
                     <label className="block text-gray-700 font-semibold">Variants:</label>
                     {variants.map((variant, index) => (
+                        
                         <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+                            
                              <input
                                 type="text"
                                 placeholder="Child Name"  // New field for child name

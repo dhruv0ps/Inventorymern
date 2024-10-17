@@ -200,5 +200,36 @@ const getSingleProduct = async (req, res) => {
         res.status(500).json({ message: 'Error fetching product', error });
     }
 };
+const togglestatus = async (req,res) => {
+   
 
-module.exports = { addProduct, getProduct, deleteProduct, updateProduct, getSingleProduct };
+    try {
+      const { productId, variantId } = req.params;
+     console.log(productId)
+      
+      const product = await Products.findById(productId);
+      if (!product) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+  
+      
+      const variant = product.variants.id(variantId);
+      if (!variant) {
+        return res.status(404).json({ message: 'Variant not found' });
+      }
+  
+      
+      variant.isActive = !variant.isActive;
+  
+      
+      await product.save();
+  
+      res.status(200).json({ message: 'Variant status updated successfully' });
+    } catch (error) {
+        console.log(error)
+      res.status(500).json({ message: 'Server error', error });
+    }
+  
+  
+}
+module.exports = { addProduct, getProduct, deleteProduct, updateProduct, getSingleProduct,togglestatus };
