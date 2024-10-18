@@ -47,44 +47,53 @@ const ProductList = () => {
 
   const filterProducts = (filters) => {
     let filtered = products;
-  
+
+    
     if (filters.search) {
-      filtered = filtered.filter((product) =>
-        product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        product.SKU.toLowerCase().includes(filters.search.toLowerCase()) ||
-        product.parentName?.toLowerCase().includes(filters.search.toLowerCase())
-      );
+        const searchTerm = filters.search.toLowerCase();
+        filtered = filtered.filter((product) =>
+            product.SKU.toLowerCase().includes(searchTerm) ||
+            product.parentName?.toLowerCase().includes(searchTerm) ||
+            product.variants.some((variant) =>
+                variant.childName?.toLowerCase().includes(searchTerm)
+            )
+        );
     }
-  
+
+   
     if (filters.color) {
-      filtered = filtered.filter((product) => {
-        if (product.variants.length > 0) {
-          return product.variants.some(variant => variant.color === filters.color);
-        }
-        return product.color === filters.color;
-      });
+        filtered = filtered.filter((product) => {
+            if (product.variants.length > 0) {
+                return product.variants.some(variant => variant.color === filters.color);
+            }
+            return product.color === filters.color; 
+        });
     }
-  
+
+   
     if (filters.minPrice) {
-      filtered = filtered.filter((product) => {
-        if (product.variants.length > 0) {
-          return product.variants.some(variant => variant.price >= Number(filters.minPrice));
-        }
-        return product.regularPrice >= Number(filters.minPrice);
-      });
+        filtered = filtered.filter((product) => {
+            if (product.variants.length > 0) {
+                return product.variants.some(variant => variant.price >= Number(filters.minPrice));
+            }
+            return product.regularPrice >= Number(filters.minPrice);
+        });
     }
-  
+
+    
     if (filters.maxPrice) {
-      filtered = filtered.filter((product) => {
-        if (product.variants.length > 0) {
-          return product.variants.some(variant => variant.price <= Number(filters.maxPrice));
-        }
-        return product.regularPrice <= Number(filters.maxPrice);
-      });
+        filtered = filtered.filter((product) => {
+            if (product.variants.length > 0) {
+                return product.variants.some(variant => variant.price <= Number(filters.maxPrice));
+            }
+            return product.regularPrice <= Number(filters.maxPrice);
+        });
     }
-  
+
+    
     setFilteredProducts(filtered);
-  };
+};
+
   
 
   const handleDelete = async (productId) => {

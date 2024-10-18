@@ -70,6 +70,7 @@ const AddCategory = () => {
             type="text"
             placeholder="Category Description"
             value={description}
+            maxLength={256}
             onChange={(e) => setDescription(e.target.value)}
             className="border border-gray-500 p-3 w-full rounded focus:outline-none focus:border-teal-500"
             required

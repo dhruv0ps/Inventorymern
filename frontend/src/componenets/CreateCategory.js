@@ -56,6 +56,7 @@ const CreateCategory = () => {
           <textarea
             id="customercategoryDescription"
             value={customercategoryDescription}
+           
             onChange={(e) => setCustomercategoryDescription(e.target.value)}
             className="mt-1 p-2 w-full border border-gray-300 rounded"
             required

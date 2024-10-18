@@ -3,9 +3,10 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Select from 'react-select';
 
 const EditProduct = () => {
-    const { id } = useParams(); 
+    const { id } = useParams();
     const [parentName, setParentName] = useState('');
     const [variants, setVariants] = useState([{
         size: '',
@@ -26,15 +27,10 @@ const EditProduct = () => {
     const [loading, setLoading] = useState(false);
     const [skuVisible, setSkuVisible] = useState(false);
     const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('');
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const [rawMaterials, setRawMaterials] = useState([]);
-
-    const colors = [
-        'Red', 'Green', 'Blue', 'Yellow', 'Black', 'White',
-        'Orange', 'Purple', 'Pink', 'Brown', 'Gray', 'Cyan',
-        'Magenta', 'Lime', 'Teal', 'Navy', 'Maroon', 'Olive',
-        'Coral', 'Gold'
-    ];
+    const [loadingCategories, setLoadingCategories] = useState(true);
+    const [loadingRawMaterials, setLoadingRawMaterials] = useState(true);
 
     const token = localStorage.getItem('token');
 
@@ -43,20 +39,18 @@ const EditProduct = () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/products/${id}`);
                 const productData = response.data;
-                console.log(productData);
                 setParentName(productData.parentName);
                 setVariants(productData.variants);
                 setName(productData.name);
                 setDescription(productData.description);
                 setSku(productData.SKU);
-                setSelectedCategory(productData.category);
+                setSelectedCategories(productData.category); // Assuming these are IDs or labels
             } catch (error) {
                 toast.error("Error fetching product: " + error.message);
             }
         };
         fetchProduct();
     }, [id]);
-   
 
     const handleAddVariant = () => {
         setVariants([...variants, {
@@ -97,7 +91,7 @@ const EditProduct = () => {
     const handleRawMaterialChange = (variantIndex, materialIndex, field, value) => {
         setVariants(prevVariants => {
             const updatedVariants = [...prevVariants];
-    
+
             if (field === 'material') {
                 const selectedMaterial = rawMaterials.find(raw => raw.material === value);
                 if (selectedMaterial) {
@@ -110,39 +104,40 @@ const EditProduct = () => {
             } else {
                 updatedVariants[variantIndex].rawMaterials[materialIndex][field] = value;
             }
-    
+
             return updatedVariants;
         });
     };
-    
 
     const handleTagChange = (index, e) => {
         const selectedTagId = e.target.value;
         const newVariants = [...variants];
         const selectedVariant = newVariants[index];
-    
+
         if (selectedTagId) {
             const tagToAdd = availableTags.find(tag => tag._id === selectedTagId);
-            // Check if the tag is already added
             if (tagToAdd && !selectedVariant.tags.includes(tagToAdd.name)) {
-                selectedVariant.tags.push(tagToAdd.name); // Store only the tag name
-                setVariants(newVariants); // Update state
+                selectedVariant.tags.push(tagToAdd.name);
+                setVariants(newVariants);
             }
         }
     };
-    
+
     const handleRemoveTag = (index, tagToRemove) => {
         const newVariants = [...variants];
         const selectedVariant = newVariants[index];
-    
-        // Remove the tag by name
         selectedVariant.tags = selectedVariant.tags.filter(tag => tag !== tagToRemove);
-        setVariants(newVariants); // Update state
+        setVariants(newVariants);
+    };
+
+    const handleCategoryChange = (selectedOptions) => {
+        const categoryValues = selectedOptions.map(option => option.value); // Assuming you are using IDs here
+        setSelectedCategories(categoryValues);
     };
 
     const validateInputs = () => {
         for (const variant of variants) {
-            if (!variant.size || !variant.firmness || !variant.price || !variant.weight || !variant.color ||
+            if (!variant.firmness || !variant.price || !variant.weight ||
                 variant.rawMaterials.some(m => !m.material || !m.quantity || !m.unit) || variant.tags.length === 0) {
                 toast.error("Please fill in all required fields for each variant.");
                 return false;
@@ -163,13 +158,13 @@ const EditProduct = () => {
                 variants,
                 name,
                 description,
-                category: selectedCategory,
+                category: selectedCategories,
             });
 
             setSku(response.data.sku);
             setSkuVisible(true);
             toast.success("Product updated successfully!");
-            navigate('/productlist')
+            navigate('/productlist');
             resetForm();
 
         } catch (error) {
@@ -188,36 +183,34 @@ const EditProduct = () => {
                 console.error("There was an error fetching tags!", error);
             }
         };
-    
+
         fetchTags();
     }, []);
-    
-    // Log availableTags after it updates
-    useEffect(() => {
-        if (availableTags.length > 0) {
-            console.log("Available Tags:", availableTags);
-        }
-    }, [availableTags]);
-    
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/categories`, {
                     headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
-                setCategories(response.data);
+                const categoryOptions = response.data.map(category => ({
+                    value: category._id, // Assuming category ID is _id
+                    label: category.name,
+                }));
+                setCategories(categoryOptions);
             } catch (error) {
                 console.error("There was an error fetching categories!", error);
                 toast.error("Error fetching categories: " + error.message);
+            } finally {
+                setLoadingCategories(false); // Stop loading after fetching
             }
         };
 
         fetchCategories();
     }, [token]);
-
+console.log(selectedCategories)
     useEffect(() => {
         const fetchRawMaterials = async () => {
             try {
@@ -225,6 +218,8 @@ const EditProduct = () => {
                 setRawMaterials(response.data);
             } catch (error) {
                 console.error('Error fetching raw materials:', error);
+            } finally {
+                setLoadingRawMaterials(false); // Stop loading after fetching
             }
         };
 
@@ -246,6 +241,8 @@ const EditProduct = () => {
         setName('');
         setDescription('');
         setSkuVisible(false);
+        setSelectedCategories([]);
+        setAvailableTags([]); // Reset selected tags if needed
     };
 
     return (
@@ -277,16 +274,7 @@ const EditProduct = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-gray-700 font-semibold">Product Name:</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            className="mt-1 p-2 border border-gray-300 rounded w-full"
-                        />
-                    </div>
+                    
                     <div>
                         <label className="block text-gray-700 font-semibold">Product Description:</label>
                         <textarea
@@ -297,22 +285,24 @@ const EditProduct = () => {
                         />
                     </div>
                     <div className="md:col-span-1">
-                        <label htmlFor="category-select" className="block text-gray-700 font-semibold">
+                      
+                        <label htmlFor="category-select" className="block  text-gray-700 font-semibold">
                             Select a Category
                         </label>
-                        <select
-                            id="category-select"
-                            value={selectedCategory}
-                            onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="mt-1 block w-full border h-10 border-gray-300 rounded-md"
-                        >
-                            <option value="">Select a category</option>
-                            {categories.map(category => (
-                                <option key={category._id} value={category.name}>
-                                    {category.name}
-                                </option>
-                            ))}
-                        </select>
+                        {categories.length > 0 ? (
+                 <Select
+                 isMulti
+                 name="categories"
+                 options={categories}
+                 className="basic-multi-select mt-2"
+                 classNamePrefix="select"
+                 onChange={handleCategoryChange}
+                 value={categories.filter(cat => selectedCategories.includes(cat.value))}
+                 isLoading={loadingCategories}
+             />
+            ) : (
+                <p>Loading categories...</p>
+            )}
                     </div>
                 </div>
 
@@ -332,24 +322,65 @@ const EditProduct = () => {
     />
   </div>
   <div>
-    <label className="block text-gray-700 font-semibold">Size:</label>
+    <label htmlFor={`height-${index}`} className="block text-sm font-semibold text-gray-700">
+        Height
+    </label>
     <input
-      type="text"
-      value={variant.size}
-      onChange={(e) => handleVariantChange(index, 'size', e.target.value)}
-      required
-      className="mt-1 p-2 border border-gray-300 rounded w-full"
+        id={`height-${index}`}
+        type="number"
+        placeholder="Height"
+        value={variant.height || ''} // Set initial value as empty if undefined
+        onChange={(e) => handleVariantChange(index, 'height', e.target.value)}
+        required
+        className="p-2 border border-gray-300 rounded w-full mt-1"
     />
-  </div>
+</div>
+
+<div>
+    <label htmlFor={`width-${index}`} className="block text-sm font-semibold text-gray-700">
+        Width
+    </label>
+    <input
+        id={`width-${index}`}
+        type="number"
+        placeholder="Width"
+        value={variant.width || ''} 
+        onChange={(e) => handleVariantChange(index, 'width', e.target.value)}
+        required
+        className="p-2 border border-gray-300 rounded w-full mt-1"
+    />
+</div>
+
+<div>
+    <label htmlFor={`length-${index}`} className="block text-sm font-semibold text-gray-700">
+        Length
+    </label>
+    <input
+        id={`length-${index}`}
+        type="number"
+        placeholder="Length"
+        value={variant.length || ''} 
+        onChange={(e) => handleVariantChange(index, 'length', e.target.value)}
+        required
+        className="p-2 border border-gray-300 rounded w-full mt-1"
+    />
+</div>
+
   <div>
     <label className="block text-gray-700 font-semibold">Firmness:</label>
-    <input
-      type="text"
-      value={variant.firmness}
-      onChange={(e) => handleVariantChange(index, 'firmness', e.target.value)}
-      required
-      className="mt-1 p-2 border border-gray-300 rounded w-full"
-    />
+    <select
+    value={variant.firmness}
+    onChange={(e) => handleVariantChange(index, 'firmness', e.target.value)}
+    required
+    className="p-2 border border-gray-300 rounded w-full"
+>
+    <option value="">Select firmness</option>
+    <option value="Ultra Plush">Ultra Plush</option>
+    <option value="Plush">Plush</option>
+    <option value="Medium">Medium</option>
+    <option value="Firm">Firm</option>
+    <option value="Extra Firm">Extra Firm</option>
+</select>
   </div>
   <div>
     <label className="block text-gray-700 font-semibold">Price:</label>
@@ -371,7 +402,7 @@ const EditProduct = () => {
       className="mt-1 p-2 border border-gray-300 rounded w-full"
     />
   </div>
-  <div>
+  {/* <div>
     <label className="block text-gray-700 font-semibold">Color:</label>
     <select
       value={variant.color}
@@ -386,7 +417,7 @@ const EditProduct = () => {
         </option>
       ))}
     </select>
-  </div>
+  </div> */}
   {/* <div>
     <label className="block text-gray-700 font-semibold">SKU:</label>
     <input

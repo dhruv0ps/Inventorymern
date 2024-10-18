@@ -1,34 +1,51 @@
 const Products = require("../model/newProduct");
-
-// Generate a new SKU for parent products
+const DeletedSKUs = require("../model/deletedSKU");
 const generateNextSKU = async () => {
+  
+    const existingProducts = await Products.find().select('SKU');
+    const existingSKUs = existingProducts.map(product => product.SKU);
+    
+    // Find all deleted SKUs
+    const deletedSKUs = await DeletedSKUs.find().select('SKU');
+    const allSKUs = [...existingSKUs, ...deletedSKUs.map(deleted => deleted.SKU)];
+
+    // Find the last SKU based on existing products
     const lastProduct = await Products.findOne().sort({ SKU: -1 }).select('SKU');
 
-    if (!lastProduct) return 'ALP0001';
+    let newSKU;
+    let newSKUIndex; // Declare newSKUIndex here
 
-    const lastSKU = lastProduct.SKU;
-    const skuNumber = parseInt(lastSKU.replace(/[^\d]/g, ''), 10);
+    if (lastProduct) {
+        const lastSKU = lastProduct.SKU;
+        const skuNumber = parseInt(lastSKU.replace(/[^\d]/g, ''), 10);
 
-    if (isNaN(skuNumber)) {
-        throw new Error('Invalid SKU format in database.');
+        if (isNaN(skuNumber)) {
+            throw new Error('Invalid SKU format in database.');
+        }
+
+        // Generate the next SKU number
+        newSKUIndex = skuNumber + 1; // Initialize newSKUIndex
+
+        // Create the new SKU string
+        newSKU = `ALP${newSKUIndex.toString().padStart(4, '0')}`;
+    } else {
+        newSKU = 'ALP0001'; // Start from the beginning if no products exist
+        newSKUIndex = 1; 
     }
 
-    let newSKUIndex = skuNumber + 1;
-    let newSKU = `ALP${newSKUIndex.toString().padStart(4, '0')}`;
-
-    const skuExists = await Products.findOne({ SKU: newSKU });
-    while (skuExists) {
-        newSKUIndex += 1;
+    
+    while (allSKUs.includes(newSKU)) {
+        newSKUIndex += 1; 
         newSKU = `ALP${newSKUIndex.toString().padStart(4, '0')}`;
     }
 
     return newSKU;
 };
 
-// Generate a child SKU based on the parent SKU and variant index
 const generateChildSKU = (parentSKU, index) => {
-    return `${parentSKU}-${index + 1}`; // Format: PARENT-SKU-1, PARENT-SKU-2, etc.
+    return `${parentSKU}-${index + 1}`; 
 };
+
 
 const addProduct = async (req, res) => {
     const {
@@ -47,16 +64,16 @@ const addProduct = async (req, res) => {
     } = req.body;
 
     try {
-        const newSKU = await generateNextSKU(); // Generate the parent SKU
+        const newSKU = await generateNextSKU(); 
         const newVariants = variants.map((variant, index) => ({
             ...variant,
-            SKU: generateChildSKU(newSKU, index), // Generate SKU for each variant
+            SKU: generateChildSKU(newSKU, index), 
         }));
 
         const newProduct = new Products({
             parentName,
             variants: newVariants,
-            SKU: newSKU, // Parent SKU
+            SKU: newSKU, 
             name,
             description,
             regularPrice,
@@ -77,6 +94,7 @@ const addProduct = async (req, res) => {
     }
 };
 
+
 const getProduct = async (req, res) => {
     try {
         const { color, minPrice, maxPrice, size, search } = req.query;
@@ -85,7 +103,8 @@ const getProduct = async (req, res) => {
         if (search) {
             query.$or = [
                 { name: { $regex: search, $options: "i" } },
-                { SKU: { $regex: search, $options: "i" } }
+                { SKU: { $regex: search, $options: "i" } },
+                { "variants.childName": { $regex: search, $options: "i" } }
             ];
         }
         if (color) {
@@ -98,12 +117,13 @@ const getProduct = async (req, res) => {
             query.regularPrice = { $gte: minPrice, $lte: maxPrice };
         }
 
-        const products = await Products.find(query) // Ensure query is applied
+        const products = await Products.find(query); // Ensure query is applied
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching products', error });
     }
 };
+
 
 const deleteProduct = async (req, res) => {
     const { id } = req.params;
@@ -114,6 +134,9 @@ const deleteProduct = async (req, res) => {
         if (!deletedProduct) {
             return res.status(404).json({ message: "Product not found" });
         }
+        const deletedSKUEntry = new DeletedSKUs({ SKU: deletedProduct.SKU });
+        await deletedSKUEntry.save();
+
 
         res.status(200).json({ message: 'Product deleted successfully!' });
     } catch (error) {
@@ -121,6 +144,7 @@ const deleteProduct = async (req, res) => {
         res.status(500).json({ message: 'Error deleting product', error });
     }
 };
+
 
 const updateProduct = async (req, res) => {
     const { id } = req.params;
@@ -138,7 +162,7 @@ const updateProduct = async (req, res) => {
         color,
         category
     } = req.body;
-     console.log(tags)
+
     try {
         // Fetch the existing product from the database
         const existingProduct = await Products.findById(id);
@@ -183,53 +207,47 @@ const updateProduct = async (req, res) => {
 
 const getSingleProduct = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
     try {
-        // Fetch the product by ID, populating the tags
+      
         const product = await Products.findById(id);
 
-        // Check if the product exists
+        
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        // Respond with the product details
+        
         res.status(200).json(product);
     } catch (error) {
         console.error('Error fetching product:', error);
         res.status(500).json({ message: 'Error fetching product', error });
     }
 };
-const togglestatus = async (req,res) => {
-   
 
+
+const togglestatus = async (req, res) => {
     try {
-      const { productId, variantId } = req.params;
-     console.log(productId)
-      
-      const product = await Products.findById(productId);
-      if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
-      }
-  
-      
-      const variant = product.variants.id(variantId);
-      if (!variant) {
-        return res.status(404).json({ message: 'Variant not found' });
-      }
-  
-      
-      variant.isActive = !variant.isActive;
-  
-      
-      await product.save();
-  
-      res.status(200).json({ message: 'Variant status updated successfully' });
+        const { productId, variantId } = req.params;
+
+        const product = await Products.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        const variant = product.variants.id(variantId);
+        if (!variant) {
+            return res.status(404).json({ message: 'Variant not found' });
+        }
+
+        variant.isActive = !variant.isActive;
+
+        await product.save();
+
+        res.status(200).json({ message: 'Variant status updated successfully' });
     } catch (error) {
-        console.log(error)
-      res.status(500).json({ message: 'Server error', error });
+        console.log(error);
+        res.status(500).json({ message: 'Server error', error });
     }
-  
-  
-}
-module.exports = { addProduct, getProduct, deleteProduct, updateProduct, getSingleProduct,togglestatus };
+};
+
+module.exports = { addProduct, getProduct, deleteProduct, updateProduct, getSingleProduct, togglestatus };

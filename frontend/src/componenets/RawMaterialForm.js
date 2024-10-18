@@ -8,12 +8,27 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
-    const [measuringUnit, setMeasuringUnit] = useState('in');
+    const [measuringUnit, setMeasuringUnit] = useState("Inches");
     const token = localStorage.getItem('token');
     const navigate = useNavigate()
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+           
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                alert('Please upload a valid image file (jpg, png, gif).');
+                e.target.value = ''; 
+                return;
+            }
+    
+            
+            const maxSize = 1 * 1024 * 1024; 
+            if (file.size > maxSize) {
+                alert('File size exceeds 1 MB. Please upload a smaller file.');
+                e.target.value = ''; 
+                return;
+            }
             setImage(file);
             setImagePreview(URL.createObjectURL(file));
         }
@@ -49,7 +64,7 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
         setDescription('');
         setImage(null);
         setImagePreview(null);
-        setMeasuringUnit('in');
+        setMeasuringUnit('');
     };
 
     // Inline styles
@@ -178,6 +193,7 @@ const RawMaterialForm = ({ onRawMaterialAdded }) => {
                         <option value="Inches">Inches</option>
                         <option value="Ounces">Ounces</option>
                         <option value="Kilograms">Kilograms</option>
+                        <option value="Pieces">Pieces</option>
                     </select>
                 </div>
 

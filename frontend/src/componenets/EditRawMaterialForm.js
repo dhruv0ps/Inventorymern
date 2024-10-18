@@ -10,7 +10,7 @@ const EditRawMaterialForm = () => {
     const [description, setDescription] = useState('');
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
-    const [measuringUnit, setMeasuringUnit] = useState('in');
+    const [measuringUnit, setMeasuringUnit] = useState('Inches');
     const [error, setError] = useState('');
     const token = localStorage.getItem('token');
 
@@ -73,7 +73,7 @@ const EditRawMaterialForm = () => {
     };
 
     const onCancel = () => {
-        navigate('/raw-materials');  // Navigate back to raw materials list
+        navigate('/rawmaterial');  // Navigate back to raw materials list
     };
 
     return (
@@ -159,6 +159,7 @@ const EditRawMaterialForm = () => {
                         <option value="Inches">Inches</option>
                         <option value="Ounces">Ounces</option>
                         <option value="Kilograms">Kilograms</option>
+                        <option value="Pieces">Pieces</option>
                     </select>
                 </div>
 
